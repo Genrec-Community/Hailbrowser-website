@@ -1,0 +1,177 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import ConnectTabs from '../../components/ConnectTabs.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { SITE } from '../../data/site';
+import { CONNECT_OPTIONS } from '../../data/clients';
+
+const toc = [
+  { id: 'how', text: 'How the bridge works' },
+  { id: 'client', text: 'Add the server to your client' },
+  { id: 'decision', text: 'Pair it with a decision model' },
+  { id: 'many', text: 'Several agents at once' },
+  { id: 'options', text: 'Options and environment' },
+  { id: 'trouble', text: 'Troubleshooting' },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Connect Claude Code, OpenCode, Cursor or Codex to your browser over MCP',
+    description:
+      'Add hailbrowser-mcp to any MCP client so your coding agent can read and drive the Chrome tabs you are signed into.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/docs/connect`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+      { '@type': 'ListItem', position: 3, name: 'Connect an agent', item: `${SITE.url}/docs/connect` },
+    ],
+  },
+];
+---
+
+<Doc
+  title="Connect an agent to HailBrowser"
+  description="Add hailbrowser-mcp to Claude Code, OpenCode, Cursor, Codex CLI, Claude Desktop, Windsurf or Gemini CLI, and drive your real Chrome tabs over MCP on 127.0.0.1:12306."
+  label="Docs · Start"
+  lead="Any MCP client can use HailBrowser. The client starts a Node process; that process opens a hub on loopback; the extension dials into the hub. Your agent never gets a second browser."
+  toc={toc}
+  jsonLd={jsonLd}
+>
+  <h2 id="how">How the bridge works</h2>
+  <p>
+    MCP clients speak stdio. The extension speaks WebSocket. <code>hailbrowser-mcp</code> is the small
+    process in between: your client launches it, it listens on <code>127.0.0.1:{SITE.port}</code>, and the
+    extension connects to that port.
+  </p>
+  <CodeBlock
+    code={`Claude Code ─┐ stdio                         ┌────────── Chrome ──────────┐
+OpenCode ────┼─► hailbrowser-mcp ◄──ws:127.0.0.1:12306──► service worker   │
+Cursor ──────┘   (first one hosts,           │   ├─ tools (CDP + DOM)     │
+                  others relay)              │   ├─ Normal agent          │
+                                             │   ├─ Ultrafast agent       │
+                                             │   └─ side panel UI ◄─ you  │
+                                             └────────────────────────────┘`}
+    file="diagram"
+    lang="text"
+    label="One hub, many clients"
+    copy={false}
+  />
+
+  <p><strong>Before you start:</strong> the extension is loaded and <strong>Settings → Allow external agents</strong> is on. That toggle is the one switch that decides whether MCP clients can reach the browser at all.</p>
+
+  <h2 id="client">Add the server to your client</h2>
+  <p>
+    Run <code>npm run setup</code> inside your checkout to print every snippet below with your real path
+    filled in. On Windows use forward slashes in JSON, for example
+    <code>D:/code/hailbrowser/mcp-server/src/index.js</code>.
+  </p>
+
+  <ConnectTabs id="docs-connect" />
+
+  <p>
+    The side panel header turns green and says <strong>MCP connected</strong> once an agent has started
+    the server. If the header stays grey, the server is either not running or pointed at a different
+    port.
+  </p>
+
+  <h2 id="decision">Pair it with a decision model</h2>
+  <p>
+    Your coding agent is good at planning and bad at pixel-level clicking, and paying a frontier model for
+    every click is wasteful. The fastest setup splits the job: the coding agent plans, and a decision model
+    picks each action.
+  </p>
+  <ol>
+    <li>In the extension, open <strong>Settings → Ultrafast</strong> and choose <strong>Decision API (Jev)</strong> or <strong>Letter-choice model</strong>. Add that key.</li>
+    <li>Leave the text helper empty if you are going to pass values yourself.</li>
+    <li>
+      Ask your agent to call <code>run_task</code> with the goal and the values to type:
+    </li>
+  </ol>
+
+  <CodeBlock
+    code={`{
+  "goal": "Search one-way flights for 1 adult",
+  "mode": "ultrafast",
+  "values": {
+    "From": "Zurich",
+    "To": "London",
+    "Date": "2026-09-20"
+  }
+}`}
+    file="run_task · arguments"
+    lang="json"
+    label="Goal plus values, no text model"
+  />
+
+  <p>
+    The decision model chooses every action and element, and which value belongs in each field. A field
+    named like the key, such as "Where to?" matching <code>To</code>, is matched without a model call. No
+    text-generation model is used at all.
+  </p>
+
+  <p>Prompts that work well with this setup:</p>
+  <ul>
+    <li><em>Use hailbrowser run_task in ultrafast mode to search flights from Zurich to London on 20 September, 1 adult.</em></li>
+    <li><em>Use hailbrowser to open my GitHub notifications and summarise what needs a reply.</em></li>
+    <li><em>Use hailbrowser on the open tab to find what the plan costs and whether annual billing is cheaper.</em></li>
+  </ul>
+
+  <h2 id="many">Several agents at once</h2>
+  <p>
+    Every client spawns its own <code>hailbrowser-mcp</code>. The first binds the port and becomes the hub;
+    the others relay through it. If the hub's client exits, another process takes over within a second and
+    the extension reconnects automatically, so you can keep Claude Code and OpenCode open together.
+  </p>
+  <p>
+    Only one agent run happens at a time. They share the debugger connection and the current tab, so a
+    second run waits rather than interleaving clicks.
+  </p>
+
+  <h2 id="options">Options and environment</h2>
+  <table>
+    <thead>
+      <tr><th>Flag or env</th><th>Default</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      {CONNECT_OPTIONS.map((option) => (
+        <tr>
+          <td><code>{option.flag}</code>{option.env && <><br /><code>{option.env}</code></>}</td>
+          <td>{option.def}</td>
+          <td>{option.meaning}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <p>
+    Once the package is on npm the command becomes <code>npx -y hailbrowser-mcp</code> (on Windows:
+    <code>cmd /c npx -y hailbrowser-mcp</code>). Today, point the client at the checkout.
+  </p>
+
+  <h2 id="trouble">Troubleshooting</h2>
+  <dl class="deflist">
+    <div>
+      <dt>"The HailBrowser extension is not connected"</dt>
+      <dd>Open Chrome, confirm the side panel's MCP label, click the pill to retry, and check that both sides use the same port.</dd>
+    </div>
+    <div>
+      <dt>The extension starts, then gets rejected</dt>
+      <dd>A different extension ID claimed the trust file. Run <code>hailbrowser-mcp trust --reset</code>, reconnect, and keep the new ID.</dd>
+    </div>
+    <div>
+      <dt>Every call returns "unknown extension"</dt>
+      <dd>The server was started with <code>HAILBROWSER_EXTENSION_ID</code> pinned to an old ID. Update or unset it.</dd>
+    </div>
+    <div>
+      <dt>Calls time out</dt>
+      <dd>Check for a JavaScript dialog on the page. A <code>confirm</code> or "leave site?" prompt freezes the tab until <code>handle_dialog</code> answers it.</dd>
+    </div>
+  </dl>
+</Doc>

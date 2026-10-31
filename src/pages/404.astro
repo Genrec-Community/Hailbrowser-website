@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Page not found"
+  description="That page does not exist. Start from the home page, the docs, or the use cases."
+  noindex={true}
+>
+  <div class="frame">
+    <section class="hero">
+      <div class="hero__top">
+        <span class="pill pill--ink">Error 404</span>
+        <a class="btn btn--ghost btn--sm" href="/">Home <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="hero__grid">
+        <div class="hero__lede">
+          <h1 class="hero__title">
+            <span>Not</span>
+            <span class="line-2">on this</span>
+            <span class="line-3">page<span class="dot" aria-hidden="true"></span></span>
+          </h1>
+          <p class="lede">
+            The link is broken, or the page moved during the build. Everything that exists is one of
+            these.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--accent" href="/">Back to the start</a>
+            <a class="btn btn--ghost" href="/docs">Read the docs</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <nav class="more-links" aria-label="Site">
+        <a href="/docs">
+          <span class="label">Read</span>
+          <b>Docs</b>
+          <em>Install, connect and every tool.</em>
+        </a>
+        <a href="/use-cases">
+          <span class="label">Explore</span>
+          <b>Use cases</b>
+          <em>Four jobs with the prompt to start.</em>
+        </a>
+        <a href="/faq">
+          <span class="label">Check</span>
+          <b>FAQ</b>
+          <em>Keys, browsers and limits.</em>
+        </a>
+        <a href="/support">
+          <span class="label">Ask</span>
+          <b>Support</b>
+          <em>Report a bug or a broken link.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,294 @@
+---
+import Base from '../layouts/Base.astro';
+import { BENCH, SITE } from '../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'HailBrowser browser-use benchmark: 26 tasks at a 4.2s average',
+    description:
+      'Ultrafast passed 26 of 26 browser-use tasks at a 4.2s average across three full runs, against 7.8s in Chat mode. Per-task times, live runs, method and caveats.',
+    datePublished: '2026-10-30',
+    dateModified: '2026-10-31',
+    author: { '@type': 'Person', name: 'Shyamnath Sankar', url: 'https://shyamnathsankar.genrecai.com/' },
+    publisher: { '@type': 'Organization', name: 'GenrecAI', url: 'https://genrecai.com' },
+    mainEntityOfPage: `${SITE.url}/benchmarks`,
+    about: { '@type': 'SoftwareApplication', name: 'HailBrowser', applicationCategory: 'BrowserApplication' },
+    citation: BENCH.script,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Benchmarks', item: `${SITE.url}/benchmarks` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Browser-use benchmark: 26 tasks at 4.2s"
+  description="The fastest browser use ever made: 26 of 26 tasks at a 4.2s average over three runs, with every per-task time, comparison and method."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Benchmarks</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Latest full run</span>
+        <span class="pill">Ultrafast · Mercury Decide</span>
+      </div>
+      <h1>26 tasks.<br />4.2 seconds each.</h1>
+      <p>
+        Ultrafast passed every task in our browser-use harness, three full runs in a row, at a
+        4.2–4.3 second average. That makes it the fastest browser use ever made. The same task set takes
+        7.8 seconds in Chat mode. Below is every task, every time, and the method, so you can rerun it
+        yourself.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="stats">
+        <div class="stat">
+          <b>26/26</b>
+          <span>Tasks passed</span>
+          <em>Three separate full runs. No partial credit.</em>
+        </div>
+        <div class="stat">
+          <b>4.2s</b>
+          <span>Average per task</span>
+          <em>4.2–4.3s across the three runs.</em>
+        </div>
+        <div class="stat">
+          <b>0</b>
+          <span>False “done” claims</span>
+          <em>A claim is checked before a run reports success.</em>
+        </div>
+        <div class="stat">
+          <b>69</b>
+          <span>Browser actions</span>
+          <em>127 decision calls, 4 text-writing calls.</em>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Fast against Chat</p>
+          <h2 class="display-m">One number for the whole loop.</h2>
+        </div>
+        <p class="body-muted">
+          Fast and Chat run the same browser, the same tools and the same task pages. The difference is
+          how a decision is made: one operation-and-element choice per step, instead of a full
+          tool-calling conversation.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <caption>Headline numbers, latest full run</caption>
+          <thead>
+            <tr><th scope="col">Measure</th><th scope="col">Fast (ultrafast)</th><th scope="col">Chat</th></tr>
+          </thead>
+          <tbody>
+            {BENCH.compare.map((row) => (
+              <tr><td>{row.metric}</td><td>{row.fast}</td><td>{row.chat}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        One full Fast run of 26 tasks: {BENCH.actions} browser actions, {BENCH.decisions} decision calls
+        and {BENCH.textCalls} text-writing calls. Chat was measured on the original 17-task set, so read
+        the averages next to that difference.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">How it got there</p>
+          <h2 class="display-m">Four upgrades, one loop.</h2>
+        </div>
+        <p class="body-muted">
+          The score did not start at 26/26. It started at 10/17 with one false completion. Each line is a
+          change to the loop, not to the task set.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <thead>
+            <tr><th scope="col">Change</th><th scope="col">Score</th><th scope="col">Note</th><th scope="col">Avg time</th></tr>
+          </thead>
+          <tbody>
+            {BENCH.progress.map((row) => (
+              <tr>
+                <td>{row.stage}</td>
+                <td class="num">{row.score}</td>
+                <td>{row.note}</td>
+                <td class="num">{row.avg}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Every task</p>
+          <h2 class="display-m">The full 26, in order.</h2>
+        </div>
+        <p class="body-muted">
+          Times include the model calls, the page reads and the action. A task with 0 actions is a
+          question answered from the page without changing anything.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <thead>
+            <tr><th scope="col">Task</th><th scope="col">Actions</th><th scope="col">Time</th></tr>
+          </thead>
+          <tbody>
+            {BENCH.tasks.map((row) => (
+              <tr>
+                <td>{row.task}</td>
+                <td class="num">{row.actions}</td>
+                <td class="num">{row.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Live runs</p>
+          <h2 class="display-m">Real sites, your Chrome.</h2>
+        </div>
+        <p class="body-muted">
+          The harness is not the whole story, so four goals were run on the live web in a normal Chrome
+          profile. Four runs is a demonstration, not a statistic.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <thead>
+            <tr><th scope="col">Goal</th><th scope="col">Result</th><th scope="col">Time</th></tr>
+          </thead>
+          <tbody>
+            {BENCH.live.map((row) => (
+              <tr>
+                <td>“{row.goal}”</td>
+                <td><span class="pass">{row.result}</span></td>
+                <td class="num">{row.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split split--wide-right">
+        <div class="stack">
+          <p class="label">Method</p>
+          <h2 class="display-m">Reproducible, not a slide.</h2>
+          <p class="body-muted">
+            The harness ships with the extension. It serves 26 local pages, drives each goal through
+            <code>run_task</code> in ultrafast mode, and scores the page state or the answer.
+          </p>
+          <div class="bench-actions">
+            <a class="btn" href={BENCH.script} rel="noopener" target="_blank">Read the harness <span class="arrow" aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="prose">
+          <h3>What is measured</h3>
+          <ul>
+            <li><strong>Task pages.</strong> 26 local pages with forms, dialogs, dropdowns, hover menus, pagination, tabs, cookie walls and a scrollable panel.</li>
+            <li><strong>Scoring.</strong> A task passes only if the page ends in the expected state, or the answer matches the page. A model saying “done” is not a pass.</li>
+            <li><strong>Model.</strong> Mercury Decide (Inception) for Fast, Mercury 2 for the Chat comparison. Both calls and page reads are inside the measured time.</li>
+            <li><strong>Runs.</strong> Three complete Fast runs of all 26 tasks. Times shown are from the latest complete run.</li>
+            <li><strong>Machine.</strong> One desktop machine, Chrome stable, ordinary network. No GPU and no special hosting.</li>
+          </ul>
+          <h3>Run it yourself</h3>
+          <pre class="mono">OPENROUTER_API_KEY=sk-or-... \
+DECISION_MODEL=inception/mercury-decide \
+node scripts/bench-fast.mjs</pre>
+          <p>
+            Set <code>BENCH_MODE=normal</code> to run the same tasks in Chat mode. The repository keeps
+            the harness at 26/26 for Fast-mode changes, so a regression shows up as a failed task, not a
+            slower average.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="callout-lime">
+        <h3>Why we call it the fastest browser use ever made</h3>
+        <p>
+          Because that is the claim the numbers support. 4.2 seconds per task, 26 of 26, no false
+          completions, and a harness anyone can rerun. We have not audited every browser agent ever
+          shipped, and we are not going to pretend otherwise. If you have a reproducible run that beats
+          this, send it and we will link it here.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--sm" href="/browser-use">What browser use is <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--sm" href="/docs/modes#fast">How Fast works <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>What this benchmark is not</h2>
+        <ul>
+          <li>It is not a third-party audit. It is our harness, run on our machine, published in full.</li>
+          <li>The 26 pages are local and simpler than the live web: no bot walls, no A/B tests, no slow third-party scripts.</li>
+          <li>Four live runs show the loop works outside the harness. They are not a sample size.</li>
+          <li>Provider latency moves the average. A slower model produces slower runs with the same task score.</li>
+          <li>“Fastest” here means fastest measured loop across the open-source browser agents we could test. It is not a claim about every proprietary system ever shipped.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/browser-use">
+          <span class="label">Category</span>
+          <b>Browser use</b>
+          <em>What the term means, and how this agent does it.</em>
+        </a>
+        <a href="/comet-alternative">
+          <span class="label">Compare</span>
+          <b>Open-source Comet</b>
+          <em>A Comet-style agent inside Chrome.</em>
+        </a>
+        <a href="/docs/modes#fast">
+          <span class="label">Mechanics</span>
+          <b>Fast mode</b>
+          <em>One decision per step, explained.</em>
+        </a>
+        <a href="/use-cases/coding-agents">
+          <span class="label">Agents</span>
+          <b>Claude Code &amp; MCP</b>
+          <em>The same loop, driven by your agent.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

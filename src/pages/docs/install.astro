@@ -1,0 +1,159 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { SITE, INSTALL } from '../../data/site';
+
+const toc = [
+  { id: 'requirements', text: 'Requirements' },
+  { id: 'load', text: 'Load the extension' },
+  { id: 'key', text: 'Add a model key' },
+  { id: 'verify', text: 'Verify it works' },
+  { id: 'agent', text: 'Connect an agent (optional)' },
+  { id: 'update', text: 'Update and uninstall' },
+  { id: 'trouble', text: 'Troubleshooting' },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'Install HailBrowser in Chrome',
+    description: 'Load the HailBrowser extension unpacked, add a model key, and verify the side panel agent runs.',
+    totalTime: 'PT2M',
+    tool: [{ '@type': 'HowToTool', name: 'Google Chrome, Edge or Brave (Chromium 116+)' }],
+    step: [
+      { '@type': 'HowToStep', name: 'Clone the repository', text: 'git clone https://github.com/Shyamnath-Sankar/project-hailbrowser.git, then npm install inside the checkout.' },
+      { '@type': 'HowToStep', name: 'Load the extension folder', text: 'Open chrome://extensions, enable Developer mode, click Load unpacked and choose the extension/ folder.' },
+      { '@type': 'HowToStep', name: 'Open the side panel', text: 'Click the toolbar icon or press Alt+H, then open Settings.' },
+      { '@type': 'HowToStep', name: 'Add a model key', text: 'Pick a provider in Settings and paste its API key. Keys stay in chrome.storage.local.' },
+      { '@type': 'HowToStep', name: 'Run a first goal', text: 'Ask the side panel to read the current tab: it should report the page title and its interactive elements.' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+      { '@type': 'ListItem', position: 3, name: 'Install', item: `${SITE.url}/docs/install` },
+    ],
+  },
+];
+---
+
+<Doc
+  title="Install HailBrowser in Chrome"
+  description="Load the HailBrowser extension unpacked, add your own model key, and verify the side panel agent runs. Node 18+, Chromium 116+, no build step."
+  label="Docs · Start"
+  lead="There is no store listing and no account. You clone the repository, point Chrome at the extension folder, and give the side panel a model key."
+  toc={toc}
+  jsonLd={jsonLd}
+>
+  <h2 id="requirements">Requirements</h2>
+  <ul>
+    <li>A desktop Chromium browser, version {SITE.minChrome} or newer: Chrome, Edge, Brave, Arc, Vivaldi.</li>
+    <li>Node 18 or newer, for the clone-and-install step and for the MCP server if you connect an agent.</li>
+    <li>An API key for one model provider, for the side panel. Coding agents can skip this if you configure a decision model instead.</li>
+    <li>git, or a zip of the repository. Nothing else: the extension is plain ES modules with no build step.</li>
+  </ul>
+
+  <div class="callout">
+    <p class="label">What you are installing</p>
+    <p>
+      One unpacked extension, plus a Node process that only runs while your MCP client is open. There is
+      no background service on your machine beyond Chrome's own extension host.
+    </p>
+  </div>
+
+  <h2 id="load">1 · Load the extension</h2>
+  <p>Clone the repository and install the workspace. The install is only needed for the MCP server package; the extension folder itself has no dependencies.</p>
+
+  <CodeBlock code={INSTALL.clone} file="terminal" lang="bash" label="Clone and install" />
+
+  <p>Then load the folder Chrome-style:</p>
+  <ol>
+    <li>Open <code>chrome://extensions</code>.</li>
+    <li>Turn on <strong>Developer mode</strong>, top right.</li>
+    <li>Click <strong>Load unpacked</strong> and pick the <code>extension/</code> folder inside your checkout. Pick the folder itself, not a file inside it.</li>
+  </ol>
+
+  <p>
+    The toolbar icon opens the side panel. <code>Alt+H</code> does the same from the keyboard. Pin the
+    icon if you plan to use it daily; Chrome hides new extensions behind the puzzle menu otherwise.
+  </p>
+
+  <h2 id="key">2 · Add a model key</h2>
+  <p>
+    Open the side panel, then <strong>Settings</strong>. HailBrowser talks to any provider you already
+    pay for, and to local runtimes that need no key at all.
+  </p>
+  <table>
+    <thead>
+      <tr><th>Provider</th><th>Key needed</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Anthropic</td><td>Yes</td><td>Claude models, tool calling.</td></tr>
+      <tr><td>OpenAI, OpenRouter, Together, Groq, DeepSeek</td><td>Yes</td><td>Any OpenAI-compatible endpoint works.</td></tr>
+      <tr><td>Google Gemini</td><td>Yes</td><td>Fast models suit long task loops.</td></tr>
+      <tr><td>Ollama, LM Studio</td><td>No</td><td>Local. For Ollama start it with <code>OLLAMA_ORIGINS=chrome-extension://*</code>, otherwise the extension gets a 403.</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Keys are stored in <code>chrome.storage.local</code> and sent only to the provider you selected.
+    There is no HailBrowser server in the middle, and no telemetry.
+  </p>
+
+  <h2 id="verify">3 · Verify it works</h2>
+  <p>Open any normal page, open the panel, and ask something that needs the page:</p>
+  <blockquote>What does this page say it costs, and is there a cheaper plan below?</blockquote>
+  <p>
+    A working install answers from the page and shows the tool calls it made. If the panel answers
+    without touching the page, the model is running but the extension is not attached; check that the
+    tab is a normal <code>https://</code> page and not a <code>chrome://</code> one.
+  </p>
+  <p>Two more checks worth doing once:</p>
+  <ul>
+    <li><code>Alt+H</code> opens the panel from the keyboard.</li>
+    <li>Settings → Safety has <strong>Allow external agents</strong> on if you plan to connect a coding agent.</li>
+  </ul>
+
+  <h2 id="agent">4 · Connect an agent (optional)</h2>
+  <p>
+    If you want Claude Code, OpenCode, Cursor, Codex, Windsurf, Gemini CLI or Claude Desktop to drive the
+    browser, print the config with your real checkout path:
+  </p>
+  <CodeBlock code={INSTALL.setup} file="terminal" lang="bash" label="Print every client config" />
+  <p>
+    Paste the block for your client, restart it, and look for a green <strong>MCP connected</strong> label
+    in the side panel header. The details per client are on
+    <a href="/docs/connect">connect an agent</a>.
+  </p>
+
+  <h2 id="update">5 · Update and uninstall</h2>
+  <p>
+    Pull the repository, then press the reload arrow on the HailBrowser card in
+    <code>chrome://extensions</code>. Reinstalling from a different folder changes the extension ID, which
+    the MCP server treats as a new extension: run <code>npx hailbrowser-mcp trust &lt;new id&gt;</code>, or
+    <code>npx hailbrowser-mcp trust --reset</code>.
+  </p>
+  <p>
+    To remove it: click <strong>Remove</strong> on the extension card, and delete the MCP entry from your
+    client config. Chats, tasks and reports live in <code>chrome.storage.local</code> and go with the
+    extension.
+  </p>
+
+  <h2 id="trouble">Troubleshooting</h2>
+  <table>
+    <thead>
+      <tr><th>Symptom</th><th>Cause and fix</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>The panel says the extension is not connected</td><td>Open Chrome, check the panel's MCP label, click the pill to retry, and make sure the hub port matches in both places.</td></tr>
+      <tr><td>Port already in use</td><td>Something else owns 12306. Pick another port with <code>--port</code> and set the same port in Settings.</td></tr>
+      <tr><td>Ollama returns 403</td><td>Start Ollama with <code>OLLAMA_ORIGINS=chrome-extension://*</code>.</td></tr>
+      <tr><td>Chrome blocks the page</td><td><code>chrome://</code> pages and the Chrome Web Store cannot be automated. Navigate to a normal site.</td></tr>
+      <tr><td>A yellow "started debugging this browser" bar</td><td>Chrome showing that <code>chrome.debugger</code> is attached. It is expected and disappears when the tab closes or the extension reloads.</td></tr>
+      <tr><td>The agent clicks the wrong thing</td><td>Re-read the page first. Refs go stale after a navigation; <code>read_page</code> again instead of reusing an old <code>ref_N</code>.</td></tr>
+    </tbody>
+  </table>
+</Doc>

@@ -1,0 +1,405 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, BENCH, AUTHOR, COMPANY } from '../data/site';
+
+const cases = [
+  {
+    href: '/use-cases/coding-agents',
+    tag: 'Coding agents',
+    title: 'Let your coding agent use your browser',
+    body: 'Claude Code, Cursor, Codex or OpenCode can read pages, click and fill forms in the tabs you are already signed into.',
+  },
+  {
+    href: '/use-cases/web-research',
+    tag: 'Research',
+    title: 'Get a report from pages that need your login',
+    body: 'Ask a question. It opens the sources in your own browser, reads them and gives you an answer with numbered references.',
+  },
+  {
+    href: '/use-cases/recurring-jobs',
+    tag: 'Every day',
+    title: 'Have a job done before you sit down',
+    body: 'Check the portal, collect the invoices, watch the price. It runs on a schedule and tells you what changed.',
+  },
+  {
+    href: '/use-cases/form-flows',
+    tag: 'Forms',
+    title: 'Fill the long form without retyping it',
+    body: 'Give it the values once. It finds the fields, types them in and tells you when a field rejected a value.',
+  },
+];
+
+const agents = ['Claude Code', 'OpenCode', 'Cursor', 'Codex CLI', 'Claude Desktop', 'Gemini CLI'];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'HailBrowser',
+    applicationCategory: 'BrowserApplication',
+    operatingSystem: 'Chrome, Edge, Brave and other Chromium browsers 116+',
+    description: SITE.description,
+    url: SITE.url,
+    license: 'https://opensource.org/license/mit',
+    codeRepository: SITE.repo,
+    softwareVersion: SITE.version,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    isAccessibleForFree: true,
+    featureList: [
+      'The fastest browser use we have measured: 26 of 26 tasks at a 4.2s average',
+      'Does the clicking inside the Chrome you are already signed into',
+      'Ask in plain English from a side panel',
+      'Fills forms, reads pages and opens tabs',
+      'MCP server so Claude Code, Cursor, Codex and other agents drive the same browser',
+      'Shows every step and can be stopped at any time',
+    ],
+    author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+    publisher: { '@type': 'Organization', name: COMPANY.name, url: COMPANY.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'HailBrowser',
+    url: SITE.url,
+    description: SITE.description,
+    publisher: { '@type': 'Organization', name: COMPANY.name, url: COMPANY.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` }],
+  },
+];
+---
+
+<Base
+  title="HailBrowser — the fastest browser use, in your own Chrome"
+  description="The fastest browser use ever made: an open-source agent in your own Chrome. 26/26 tasks at 4.2s, plus MCP for Claude Code, Cursor and Codex."
+  jsonLd={jsonLd}
+>
+  <section class="hero">
+    <div class="frame">
+      <div class="hero__top">
+        <div class="hero__tags">
+          <span class="pill pill--live">Fastest browser use · 4.2s</span>
+          <span class="pill">Open source · MIT</span>
+          <span class="pill">No account</span>
+        </div>
+        <a class="btn btn--accent btn--sm" href="#install">Download <span class="arrow" aria-hidden="true">↓</span></a>
+      </div>
+
+      <h1 class="hero__title">
+        <span>Your own</span>
+        <span class="line-2">browser</span>
+        <span class="line-3">agent<span class="dot" aria-hidden="true"></span></span>
+      </h1>
+
+      <div class="hero__grid">
+        <div class="hero__lede">
+          <p class="lede">
+            HailBrowser does the clicking for you, inside the browser you already use — and it is the
+            fastest browser use ever made. 26 of 26 tasks at a 4.2 second average. Ask in plain
+            English: it opens the tab, reads the page, fills the form and tells you what it found. No new
+            profile. No logging in again.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--accent" href="#install">Download HailBrowser <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost" href="/benchmarks">See the benchmark</a>
+          </div>
+          <div class="hero__meta">
+            <span>Free forever, MIT</span>
+            <span>Your keys stay on your machine</span>
+            <span>Watch and stop every step</span>
+          </div>
+        </div>
+
+        <figure class="shot-frame hero__shot">
+          <img
+            src="/shots/chat.png"
+            width="400"
+            height="720"
+            alt="The HailBrowser side panel: a chat asking it to remember a favourite city, then to schedule a daily check"
+            loading="eager"
+          />
+          <figcaption class="hero__shot-caption">A real panel: it remembers a preference, then offers to schedule the job.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="frame">
+    <section class="section section--flush" id="install">
+      <div class="section-head section-head--split">
+        <div>
+          <p class="label">Install</p>
+          <h2 class="display-l">Three steps.<br />Two minutes.</h2>
+        </div>
+        <div class="install-start">
+          <a class="btn btn--accent" href={SITE.download} rel="noopener" target="_blank">
+            Download HailBrowser <span class="arrow" aria-hidden="true">↓</span>
+          </a>
+          <p class="note">Version {SITE.version} · MIT · works in Chrome, Edge and Brave.</p>
+        </div>
+      </div>
+
+      <div class="steps" data-reveal-group>
+        <div class="step">
+          <div class="step__n"><span>Step 1</span><span>download</span></div>
+          <h3>Download the folder</h3>
+          <p>
+            Use the button above, then unzip it somewhere you can find again. There is nothing to
+            build and nothing to install system-wide.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step__n"><span>Step 2</span><span>load</span></div>
+          <h3>Load it in Chrome</h3>
+          <p>
+            Open <code>chrome://extensions</code>, turn on <strong>Developer mode</strong>, click
+            <strong>Load unpacked</strong> and choose the <code>extension</code> folder inside the
+            unzipped folder.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step__n"><span>Step 3</span><span>key</span></div>
+          <h3>Open the panel</h3>
+          <p>
+            Click the HailBrowser icon or press <code>Alt+H</code>. In <strong>Settings</strong>, add
+            the key for the model you use. Ollama and LM Studio need no key.
+          </p>
+        </div>
+      </div>
+
+      <div class="install-foot">
+        <p class="note">
+          Prefer a terminal? <a class="link" href="/docs/install">The install guide</a> has the
+          <code>git clone</code> commands, a verification step and troubleshooting.
+        </p>
+        <p class="note">
+          Using a coding agent? <a class="link" href="/docs/connect">Connecting it</a> takes one
+          config block, and the docs print it with your real path.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <div class="frame">
+    <section class="section" id="speed">
+      <div class="section-head section-head--split">
+        <div>
+          <p class="label">The proof</p>
+          <h2 class="display-l">26 tasks.<br />4.2 seconds each.</h2>
+        </div>
+        <p class="body-muted">
+          It is the fastest browser use ever made, and the evidence is public. Ultrafast passed every
+          task in our browser-use harness, three full runs in a row, at a 4.2-second average — with the
+          harness, the per-task times and the model written down.
+        </p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <b>{BENCH.passed}/{BENCH.total}</b>
+          <span>Tasks passed</span>
+          <em>Three separate full runs. No partial credit.</em>
+        </div>
+        <div class="stat">
+          <b>{BENCH.avg}</b>
+          <span>Average per task</span>
+          <em>Against 7.8s in Chat mode on the same kind of loop.</em>
+        </div>
+        <div class="stat">
+          <b>0</b>
+          <span>False “done” claims</span>
+          <em>A model saying done is checked, not trusted.</em>
+        </div>
+        <div class="stat">
+          <b>{BENCH.actions}</b>
+          <span>Browser actions</span>
+          <em>{BENCH.decisions} decision calls, {BENCH.textCalls} text calls.</em>
+        </div>
+      </div>
+
+      <div class="bench-actions">
+        <a class="btn btn--ghost btn--sm" href="/benchmarks">Every task and time <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost btn--sm" href="/docs/modes#fast">How Fast works <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <p class="note">
+        A local 26-page harness, run on one desktop machine with Mercury Decide for Fast and Mercury 2
+        for the Chat comparison. <a class="link" href="/benchmarks">The benchmark page</a> includes the
+        method, the four live runs and what the numbers do not prove.
+      </p>
+    </section>
+  </div>
+
+  <div class="frame">
+    <section class="section" id="how">
+      <div class="section-head section-head--split">
+        <div>
+          <p class="label">What it does</p>
+          <h2 class="display-l">It works where<br />you already are.</h2>
+        </div>
+        <p class="body-muted">
+          Most browser agents get a fresh, empty browser somewhere in the cloud. HailBrowser works in
+          the one on your desk, with your tabs and your logins, and shows you everything it does.
+        </p>
+      </div>
+
+      <div class="split split--wide-right">
+        <dl class="deflist">
+          <div>
+            <dt>No second browser</dt>
+            <dd>It uses the Chrome you are signed into. The sites you already use just work, without another login or a copied profile.</dd>
+          </div>
+          <div>
+            <dt>Plain English in</dt>
+            <dd>Ask from the side panel, or hand the job to Claude Code, Cursor or Codex. Give it the goal and the values, not a list of steps.</dd>
+          </div>
+          <div>
+            <dt>Nothing hidden</dt>
+            <dd>A driven tab gets a coloured border, a cursor that shows where it clicks, and a Stop button. Every step is listed in the panel.</dd>
+          </div>
+          <div>
+            <dt>It says when it is stuck</dt>
+            <dd>A field that rejected a value, a dialog in the way, a page that would not load: it reports the problem instead of pretending.</dd>
+          </div>
+        </dl>
+
+        <div class="stack">
+          <div class="shots shots--pair">
+            <figure>
+              <img src="/shots/sidepanel.png" width="400" height="720" alt="The HailBrowser side panel next to a web page, with a chat box and a list of steps" loading="lazy" />
+              <figcaption>Side panel</figcaption>
+            </figure>
+            <figure>
+              <img src="/shots/research.png" width="400" height="720" alt="A research answer with numbered sources listed under it" loading="lazy" />
+              <figcaption>Answer with sources</figcaption>
+            </figure>
+          </div>
+          <p class="note">One chat box, the tab it is working in, and every step it took.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="frame">
+    <section class="section" id="cases">
+      <div class="section-head section-head--split">
+        <div>
+          <p class="label">Things to ask it</p>
+          <h2 class="display-l">Start with a job<br />you already do.</h2>
+        </div>
+        <p class="body-muted">
+          Each guide has a prompt you can paste, what the agent will do, and what to check
+          afterwards. No invented benchmarks.
+        </p>
+      </div>
+
+      <div class="cases cases--four" data-reveal-group>
+        {cases.map((item) => (
+          <a class="case" href={item.href}>
+            <div class="case__top"><span>{item.tag}</span><span class="case__arrow" aria-hidden="true">↗</span></div>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <div class="frame">
+    <section class="section" id="ways">
+      <div class="section-head section-head--split">
+        <div>
+          <p class="label">Two ways in</p>
+          <h2 class="display-l">Use it, or<br />wire it up.</h2>
+        </div>
+        <p class="body-muted">
+          Most people want the first one: type a job, watch it happen. Developers want the second:
+          their own agent, using this browser as a tool. Both are the same extension.
+        </p>
+      </div>
+
+      <div class="ways">
+        <div class="way">
+          <p class="label">01 · Side panel</p>
+          <h3>The everyday way</h3>
+          <p>
+            Click the HailBrowser icon and ask in plain English. It opens the tab, reads the page,
+            fills the form and writes the answer with sources. Chat, Fast, Research and Tasks, with
+            every step listed and a Stop button.
+          </p>
+          <a class="btn btn--ghost btn--sm" href="/docs/modes">Read the modes <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="way way--dark">
+          <p class="label">02 · MCP</p>
+          <h3>The agent way</h3>
+          <p>
+            HailBrowser runs a local MCP server with 18 browser tools on <code>127.0.0.1:12306</code>.
+            That makes it browser use over MCP: add one config block and Claude Code, OpenCode, Cursor
+            or Codex drives the same signed-in browser while you work.
+          </p>
+          <ul class="agent-list">
+            {agents.map((agent) => <li>{agent}</li>)}
+          </ul>
+          <a class="btn btn--accent btn--sm" href="/docs/connect">Connect an agent <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="frame">
+    <section class="section section--tight" id="author">
+      <div class="author">
+        <div class="author__who">
+          <p class="label">Built by</p>
+          <b>{AUTHOR.name}</b>
+          <span>
+            {AUTHOR.role} of HailBrowser, at {COMPANY.name}. Made in the open: the extension, the MCP
+            server, the docs and the benchmark are all in one MIT-licensed repository.
+          </span>
+        </div>
+        <div class="author__links">
+          <a class="btn btn--ghost btn--sm" href={AUTHOR.url} rel="noopener" target="_blank">Personal site <span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="btn btn--ghost btn--sm" href={COMPANY.url} rel="noopener" target="_blank">{COMPANY.name} <span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="btn btn--ghost btn--sm" href="/about">About <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight" id="more">
+      <nav class="more-links" aria-label="More">
+        <a href="/docs">
+          <span class="label">Read</span>
+          <b>Docs</b>
+          <em>Install, connect, every tool and mode.</em>
+        </a>
+        <a href="/benchmarks">
+          <span class="label">Verify</span>
+          <b>Benchmarks</b>
+          <em>26 tasks, 4.2s each, every number.</em>
+        </a>
+        <a href="/browser-use">
+          <span class="label">Category</span>
+          <b>Browser use &amp; MCP</b>
+          <em>What browser use means, and the two shapes.</em>
+        </a>
+        <a href="/comet-alternative">
+          <span class="label">Compare</span>
+          <b>Open-source Comet</b>
+          <em>An extension, not a new browser.</em>
+        </a>
+        <a href="/faq">
+          <span class="label">Check</span>
+          <b>FAQ</b>
+          <em>The questions asked before installing.</em>
+        </a>
+        <a href="/support">
+          <span class="label">Ask</span>
+          <b>Support</b>
+          <em>Where to report a bug or get help.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

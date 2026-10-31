@@ -1,0 +1,155 @@
+---
+import Base from '../layouts/Base.astro';
+import CodeBlock from '../components/CodeBlock.astro';
+import { SITE } from '../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'HailBrowser support',
+    description:
+      'Where to get help with HailBrowser: troubleshooting guides, GitHub issues, and private security reports.',
+    url: `${SITE.url}/support`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Support', item: `${SITE.url}/support` },
+    ],
+  },
+];
+---
+
+<Base
+  title="HailBrowser support and bug reports"
+  description="Get help with HailBrowser: read the install and connect troubleshooting tables, open a GitHub issue with the details that matter, or report a security problem."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Support</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Open source</span>
+        <span class="pill">Community maintained</span>
+      </div>
+      <h1>Help, without an account.</h1>
+      <p>
+        There is no support inbox and no ticket number. Help happens in the open, on GitHub, and the
+        guides cover most problems before you need to ask.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="cases cases--three" data-reveal-group>
+        <a class="case" href="/docs/install#trouble">
+          <div class="case__top"><span>Read first</span><span class="case__arrow" aria-hidden="true">↗</span></div>
+          <h3>Troubleshooting</h3>
+          <p>The install and connect guides both end with the failures people actually hit, and the fix for each.</p>
+        </a>
+        <a class="case" href={`${SITE.repo}/issues`} rel="noopener" target="_blank">
+          <div class="case__top"><span>Bug or question</span><span class="case__arrow" aria-hidden="true">↗</span></div>
+          <h3>Open an issue</h3>
+          <p>Search the existing issues first, then describe what you expected, what happened, and how to reproduce it.</p>
+        </a>
+        <a class="case" href={`${SITE.repo}/security/advisories/new`} rel="noopener" target="_blank">
+          <div class="case__top"><span>Private</span><span class="case__arrow" aria-hidden="true">↗</span></div>
+          <h3>Report a vulnerability</h3>
+          <p>Use GitHub's private advisory form. Do not open a public issue for a security problem.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split">
+        <div class="stack">
+          <p class="label">A report that gets fixed</p>
+          <h2 class="display-m">Four things to include.</h2>
+          <p class="body-muted">
+            Browser agents fail in ways that are hard to guess. These four details turn "it does not
+            work" into something reproducible.
+          </p>
+          <ul>
+            <li>The browser and version: Chrome, Edge or Brave, and the number from <code>chrome://version</code>.</li>
+            <li>What you asked for, word for word, and which mode: Chat, Fast, Research or Tasks.</li>
+            <li>What happened instead, including the last step shown in the side panel.</li>
+            <li>Any error text from the panel console. Right-click the panel, Inspect, Console.</li>
+          </ul>
+          <p class="note">
+            Remove API keys, cookies and personal data before pasting. A screenshot of the panel is
+            usually more useful than a paragraph.
+          </p>
+        </div>
+
+        <div class="stack" style="align-content:start">
+          <CodeBlock
+            code={`Browser:      Chrome 141.0.7390.55 (macOS)
+Mode:         Fast (ultrafast)
+Goal:         "search one-way ZRH to LHR on 20 Sep"
+Expected:     results page
+Happened:     stopped on step 4, "field rejected the value"
+Console:      TypeError: ... (paste the first line)
+Repro:        always / sometimes / once`}
+            file="issue template"
+            lang="text"
+            label="Copy this into the issue"
+          />
+          <p class="note">
+            Never paste a key. If you think a key leaked, revoke it with your provider first.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="split">
+        <div class="callout">
+          <p class="label">What support is not</p>
+          <p>
+            HailBrowser is MIT licensed and maintained by contributors. There is no paid plan, no
+            uptime promise and no guaranteed reply time. Issues are answered when someone who knows
+            the area has time.
+          </p>
+        </div>
+        <div class="callout">
+          <p class="label">What we cannot fix</p>
+          <p>
+            Provider keys, quotas and billing belong to Anthropic, OpenAI, Google or whoever you chose.
+            Sites that block automation, and <code>chrome://</code> pages, are blocked by Chrome itself.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="More help">
+        <a href="/docs/install">
+          <span class="label">Start</span>
+          <b>Install guide</b>
+          <em>Requirements, verification and fixes.</em>
+        </a>
+        <a href="/docs/connect">
+          <span class="label">Agents</span>
+          <b>Connect guide</b>
+          <em>Per-client config and the trust model.</em>
+        </a>
+        <a href="/faq">
+          <span class="label">Answers</span>
+          <b>FAQ</b>
+          <em>Keys, browsers, privacy and limits.</em>
+        </a>
+        <a href="/docs/limits">
+          <span class="label">Honest</span>
+          <b>Limits</b>
+          <em>What version {SITE.version} cannot do yet.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

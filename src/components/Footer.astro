@@ -1,0 +1,38 @@
+---
+import { SITE, FOOTER_LINKS } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer on-dark">
+  <div class="frame">
+    <div class="footer-cta">
+      <div>
+        <p class="label" style="color:var(--muted);margin-bottom:14px">Open source · MIT</p>
+        <h2>Hail a browser.<br />Keep your logins.</h2>
+      </div>
+      <div class="stack" style="gap:10px;justify-items:start">
+        <a class="btn btn--accent" href="/#install">Download HailBrowser <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="/docs/connect" style="--btn-fg:var(--ground);border-color:var(--line)">Connect an agent</a>
+        <span class="note" style="color:var(--muted)">Chromium {SITE.minChrome}+ · v{SITE.version} · no account</span>
+      </div>
+    </div>
+
+    <div class="footer-cols">
+      {FOOTER_LINKS.map((col) => (
+        <div>
+          <h3>{col.title}</h3>
+          {col.links.map((link) => (
+            <a href={link.href} rel={link.href.startsWith('http') ? 'noopener' : undefined} target={link.href.startsWith('http') ? '_blank' : undefined}>{link.label}</a>
+          ))}
+        </div>
+      ))}
+    </div>
+
+    <div class="footer-base">
+      <span>© {year} HailBrowser contributors · {SITE.license}</span>
+      <span>Built with Astro, GSAP and Lenis · no analytics</span>
+      <a href={SITE.repo} rel="noopener" target="_blank">github.com/Shyamnath-Sankar/project-hailbrowser</a>
+    </div>
+  </div>
+</footer>

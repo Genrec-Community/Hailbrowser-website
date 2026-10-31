@@ -1,0 +1,153 @@
+---
+import Base from '../../layouts/Base.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { SITE } from '../../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Research with HailBrowser in your own logged-in tabs',
+    description:
+      'Ask a question, let HailBrowser open the sources in your browser, and get an answer-first report with numbered citations. Quick, Standard and Deep.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/use-cases/web-research`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Use cases', item: `${SITE.url}/use-cases` },
+      { '@type': 'ListItem', position: 3, name: 'Web research', item: `${SITE.url}/use-cases/web-research` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Web research from pages that need your login"
+  description="HailBrowser research opens sources in background tabs of your own browser, so JavaScript-heavy and logged-in pages work, then writes an answer with numbered citations."
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/use-cases">Use cases</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Web research</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Use case 02</span>
+        <span class="pill">Quick · Standard · Deep</span>
+      </div>
+      <h1>A report from the pages<br />a crawler cannot open.</h1>
+      <p>
+        Most research tools fetch a URL and hope. HailBrowser opens the source in a background tab of
+        your browser, waits for it to render, and reads it with the session you already have.
+      </p>
+    </header>
+
+    <div class="split split--wide-right">
+      <div class="prose">
+        <h2>The prompt</h2>
+        <CodeBlock
+          code={`Research the current annual price of the three
+password managers I have open, then tell me which
+is cheapest per year and what each includes.
+Cite every price.`}
+          file="side panel · Research"
+          lang="text"
+          label="A question, a depth, a citation rule"
+        />
+        <p>
+          Pick Quick for a first look, Standard for most decisions, Deep when the answer rests on
+          several sources that disagree.
+        </p>
+
+        <h2>What happens</h2>
+        <ol>
+          <li><strong>Plan.</strong> Two to four search queries, written to cover the question from different angles.</li>
+          <li><strong>Search.</strong> DuckDuckGo by default, with another engine tried if the first shows a CAPTCHA or nothing useful.</li>
+          <li><strong>Read.</strong> The best results, different sites first, open in parallel background tabs of your browser. JavaScript, cookies and your logins all apply.</li>
+          <li><strong>Fill gaps.</strong> Standard and Deep runs look for what is missing, or what rests on a single source, and search again.</li>
+          <li><strong>Write.</strong> The report answers first, then gives detail. Every claim carries a numbered source, and citations to sources that do not exist are removed.</li>
+        </ol>
+        <p>
+          Tabs are closed when it finishes. The report stays in the chat and in History, and can be
+          copied, downloaded as Markdown, or repeated on a schedule.
+        </p>
+
+        <h2>What to check</h2>
+        <ul>
+          <li><strong>Open the numbers.</strong> Click a citation before you rely on it. The link should be the page the claim came from.</li>
+          <li><strong>Look at the date.</strong> A price from last year is still a source; it is just not the current price.</li>
+          <li><strong>Check the depth.</strong> A Quick run is a first look, not a decision document.</li>
+        </ul>
+
+        <h2>What can go wrong</h2>
+        <ul>
+          <li><strong>The best sources are PDFs.</strong> Research cannot read PDFs yet. It will lean on HTML sources or return a thinner answer.</li>
+          <li><strong>Every source is behind a login you do not have.</strong> It will report the gap instead of inventing an answer.</li>
+          <li><strong>A site blocks automation.</strong> The run skips it and notes why; another source takes its place when one exists.</li>
+          <li><strong>The question has no answer.</strong> It says so. That is the intended behaviour, not a failure.</li>
+        </ul>
+      </div>
+
+      <aside class="stack" style="align-content:start">
+        <div class="callout">
+          <p class="label">Depths</p>
+          <ul>
+            <li><strong>Quick</strong> · 1 round · about 4 sources</li>
+            <li><strong>Standard</strong> · 2 rounds · about 6</li>
+            <li><strong>Deep</strong> · 3 rounds · about 10</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <p class="label">Tools in this guide</p>
+          <ul class="tool-links">
+            <li><a href="/docs/mcp#tool-tabs_create">tabs_create</a></li>
+            <li><a href="/docs/mcp#tool-navigate">navigate</a></li>
+            <li><a href="/docs/mcp#tool-read_page">read_page</a></li>
+            <li><a href="/docs/mcp#tool-get_page_text">get_page_text</a></li>
+          </ul>
+        </div>
+        <div class="callout">
+          <p class="label">Full mechanics</p>
+          <p>
+            The planning, reading and citation rules are in
+            <a class="link" href="/docs/modes#research">the modes guide <span class="arrow" aria-hidden="true">→</span></a>
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/use-cases/recurring-jobs">
+          <span class="label">Next</span>
+          <b>Recurring jobs</b>
+          <em>The same report, every Monday morning.</em>
+        </a>
+        <a href="/docs/modes">
+          <span class="label">Behaviour</span>
+          <b>Modes</b>
+          <em>Chat, Fast, Research and Tasks.</em>
+        </a>
+        <a href="/docs/limits">
+          <span class="label">Honest</span>
+          <b>Limits</b>
+          <em>PDFs, paywalls and thin sources.</em>
+        </a>
+        <a href="/support">
+          <span class="label">Help</span>
+          <b>Support</b>
+          <em>Report a source that failed.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

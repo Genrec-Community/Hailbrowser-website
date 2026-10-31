@@ -1,0 +1,253 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, AUTHOR, COMPANY, BENCH } from '../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About HailBrowser',
+    description:
+      'HailBrowser is an open-source browser-use agent built by Shyamnath Sankar at GenrecAI: an MIT extension for the Chrome you are already signed into, plus an MCP server for coding agents.',
+    url: `${SITE.url}/about`,
+    isPartOf: { '@id': `${SITE.url}/#site` },
+    mainEntity: {
+      '@type': 'SoftwareApplication',
+      name: 'HailBrowser',
+      applicationCategory: 'BrowserApplication',
+      operatingSystem: 'Chrome, Edge, Brave and other Chromium browsers 116+',
+      url: SITE.url,
+      codeRepository: SITE.repo,
+      license: 'https://opensource.org/license/mit',
+      softwareVersion: SITE.version,
+      author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+      publisher: { '@type': 'Organization', name: COMPANY.name, url: COMPANY.url },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'About', item: `${SITE.url}/about` },
+    ],
+  },
+];
+---
+
+<Base
+  title="About HailBrowser — built by Shyamnath Sankar, GenrecAI"
+  description="HailBrowser is an MIT browser-use agent for the Chrome you are signed into. Built by Shyamnath Sankar at GenrecAI. No account, no telemetry."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">About</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">About</span>
+        <span class="pill">MIT · v{SITE.version}</span>
+      </div>
+      <h1>A browser agent<br />that stays yours.</h1>
+      <p>
+        HailBrowser is built on one bet: the agent should come to your browser, not the other way round.
+        It is an MIT-licensed extension for the Chrome you already use, with a local MCP server so your
+        coding agent can use the same signed-in session. It is made by
+        <a class="link" href={AUTHOR.url}>{AUTHOR.name}</a> at
+        <a class="link" href={COMPANY.url}>{COMPANY.name}</a>.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="stats">
+        <div class="stat">
+          <b>MIT</b>
+          <span>Licence</span>
+          <em>Read it, fork it, ship it. No seat price.</em>
+        </div>
+        <div class="stat">
+          <b>0</b>
+          <span>Telemetry</span>
+          <em>No analytics, no account, no call-home.</em>
+        </div>
+        <div class="stat">
+          <b>127.0.0.1</b>
+          <span>Where the hub listens</span>
+          <em>Not a cloud relay. Your machine only.</em>
+        </div>
+        <div class="stat">
+          <b>{BENCH.passed}/{BENCH.total}</b>
+          <span>Benchmark tasks passed</span>
+          <em>At a {BENCH.avg} average, in the open.</em>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split split--wide-right">
+        <div class="stack">
+          <p class="label">Why it exists</p>
+          <h2 class="display-l">The browser is<br />already logged in.</h2>
+          <p class="body-muted">
+            Most browser agents solve the wrong half of the problem. They can click; the hard part was
+            never clicking. It is everything around it: the session, the extension, the tab you were
+            already on, the account you cannot sign into twice.
+          </p>
+        </div>
+        <div class="prose">
+          <p>
+            So HailBrowser starts from the browser rather than from a script. It attaches to the Chrome,
+            Edge or Brave you are in, reads the page into something a model can reason about, and does
+            the action in the tab you already have open. There is no second profile to keep in sync, no
+            cookies to export, no fresh Chromium that has never seen your bank or your inbox.
+          </p>
+          <p>
+            The second bet is that speed is a design decision, not a model upgrade. Fast mode asks the
+            model for one thing — an operation and an element index — and never lets model output become
+            a selector, a coordinate or code. That is why the benchmark loop averages {BENCH.avg} across
+            {BENCH.total} tasks, and why the harness is published rather than quoted.
+          </p>
+          <p>
+            The third is that an agent people cannot inspect is an agent they will not trust with a real
+            login. Every step is listed, every driven tab is outlined, there is a Stop button, and the
+            whole extension is plain ES modules you can read. Limits are documented on a page of their
+            own instead of discovered in a support thread.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Principles</p>
+          <h2 class="display-m">Four things that do not change.</h2>
+        </div>
+        <p class="body-muted">
+          Features move. These are the constraints the features have to fit inside.
+        </p>
+      </div>
+
+      <dl class="deflist">
+        <div>
+          <dt>Your browser, not ours</dt>
+          <dd>
+            The agent runs where you already work. A separate browser is a separate set of logins,
+            extensions and habits, and we are not asking anyone to move.
+          </dd>
+        </div>
+        <div>
+          <dt>Your keys stay local</dt>
+          <dd>
+            Model keys live in <code>chrome.storage.local</code> and go only to the provider you chose.
+            The MCP hub binds to <code>127.0.0.1:12306</code> and rejects web-page origins. There is no
+            HailBrowser account and no telemetry.
+          </dd>
+        </div>
+        <div>
+          <dt>Claims come with a harness</dt>
+          <dd>
+            “Fastest” is a measured statement, so the {BENCH.total}-task harness, the per-task times and
+            the command to rerun it are all public. If a number cannot be reproduced, it does not go on
+            the site.
+          </dd>
+        </div>
+        <div>
+          <dt>Say what it cannot do</dt>
+          <dd>
+            Shadow DOM, cross-origin iframes, canvas apps, file uploads and PDF research are unfinished.
+            The <a class="link" href="/docs/limits">limits page</a> says so before you install, not after.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">How it is built</p>
+          <h2 class="display-m">Small enough to read.</h2>
+        </div>
+        <p class="body-muted">
+          No bundler, no framework, no account service. The interesting parts are the page snapshot, the
+          decision loop and the local hub.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <caption>The stack, briefly</caption>
+          <thead>
+            <tr><th scope="col">Part</th><th scope="col">What it is</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Extension</td><td>Manifest V3, plain ES modules, no build step. Side panel plus content scripts.</td></tr>
+            <tr><td>Page access</td><td><code>chrome.debugger</code> on your normal profile. No remote-debugging port, no second browser.</td></tr>
+            <tr><td>Decision loop</td><td>Chat, Fast (ultrafast), Research and Tasks, over any OpenAI-compatible provider.</td></tr>
+            <tr><td>MCP server</td><td>A local hub on <code>127.0.0.1:12306</code>, {SITE.mcpToolCount} browser tools over MCP, {SITE.toolCount} in total including task runs.</td></tr>
+            <tr><td>Benchmark</td><td>26 local pages, scored on page state or answer, run with <code>scripts/bench-fast.mjs</code>.</td></tr>
+            <tr><td>Requirements</td><td>Chromium {SITE.minChrome}+, Node for the MCP server, a model key unless you run a local model.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="author">
+        <div class="author__who">
+          <p class="label">Built by</p>
+          <b>{AUTHOR.name}</b>
+          <span>
+            {AUTHOR.role} of HailBrowser, at {COMPANY.name}. The extension, the MCP server, the docs and
+            the benchmark are maintained in the open; the repository is the source of truth for every
+            claim on this site.
+          </span>
+        </div>
+        <div class="author__links">
+          <a class="btn btn--ghost btn--sm" href={AUTHOR.url} rel="noopener" target="_blank">Personal site <span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="btn btn--ghost btn--sm" href={COMPANY.url} rel="noopener" target="_blank">{COMPANY.name} <span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="btn btn--ghost btn--sm" href={SITE.repo} rel="noopener" target="_blank">GitHub <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="callout">
+        <p class="label">Get involved</p>
+        <p>
+          Bug reports and reproducible benchmark runs are the two most useful contributions. The
+          <a class="link" href="/support">support page</a> says what to include; the
+          <a class="link" href="/docs/install">install guide</a> gets you to a working build.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/benchmarks">
+          <span class="label">Evidence</span>
+          <b>Benchmark</b>
+          <em>26 tasks, 4.2s each, every number.</em>
+        </a>
+        <a href="/browser-use">
+          <span class="label">Category</span>
+          <b>Browser use</b>
+          <em>What the term means, and the two shapes.</em>
+        </a>
+        <a href="/comet-alternative">
+          <span class="label">Compare</span>
+          <b>Open-source Comet</b>
+          <em>An extension, not a new browser.</em>
+        </a>
+        <a href="/docs/security">
+          <span class="label">Trust</span>
+          <b>Security model</b>
+          <em>Keys, localhost, and untrusted pages.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

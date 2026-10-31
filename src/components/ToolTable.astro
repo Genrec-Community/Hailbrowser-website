@@ -1,0 +1,54 @@
+---
+import { TOOLS, TOOL_GROUPS } from '../data/tools';
+
+const grouped = TOOL_GROUPS.map((group) => ({
+  ...group,
+  tools: TOOLS.filter((tool) => tool.group === group.key),
+})).filter((group) => group.tools.length > 0);
+
+const key = (name: string, desc: string, params: { name: string; note?: string }[]) =>
+  `${name} ${desc} ${params.map((p) => `${p.name} ${p.note ?? ''}`).join(' ')}`.toLowerCase();
+---
+
+<div class="tools" data-tools>
+  <div class="tools__toolbar">
+    <label class="search">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.6" />
+        <path d="m10.6 10.6 3 3" />
+      </svg>
+      <input type="search" placeholder="Filter tools: click, tab, task" data-tool-search aria-label="Filter the tool list" autocomplete="off" />
+    </label>
+    <p class="note" data-tool-count aria-live="polite">{TOOLS.length} tools · {TOOLS.filter((t) => !t.mcpOnly).length} in MCP · 2 MCP only</p>
+  </div>
+
+  <div data-tool-list>
+    {grouped.map((group) => (
+      <section data-tool-group>
+        <h3 class="tool-group">{group.title}</h3>
+        {group.tools.map((tool) => (
+          <article class="tool" data-tool data-key={key(tool.name, tool.description, tool.params)}>
+            <h4 class="tool__name">
+              {tool.name}
+              {tool.mcpOnly && <span class="badge">MCP only</span>}
+            </h4>
+            <div>
+              <p class="tool__desc">{tool.description}</p>
+              {tool.params.length > 0 && (
+                <ul class="tool__params">
+                  {tool.params.map((p) => (
+                    <li class:list={['param', p.required && 'param--req']}>
+                      <b>{p.name}</b>{p.required ? ' *' : ''}{p.note ? ` · ${p.note}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
+    ))}
+  </div>
+
+  <p class="tools-empty" data-tools-empty hidden>No tool matches that. Try "click", "tab" or "task".</p>
+</div>

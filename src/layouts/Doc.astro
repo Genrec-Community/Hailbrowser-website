@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import { DOCS, DOC_GROUPS, pagerFor } from '../data/docs';
+
+interface Props {
+  title: string;
+  description: string;
+  label: string;
+  lead: string;
+  toc: { id: string; text: string }[];
+  jsonLd?: Record<string, unknown>[];
+}
+
+const { title, description, label, lead, toc, jsonLd } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '');
+const { prev, next } = pagerFor(path);
+const current = DOCS.find((doc) => doc.href === path);
+---
+
+<Base title={title} description={description} type="article" jsonLd={jsonLd}>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/docs">Docs</a><span aria-hidden="true">/</span>
+      <span aria-current="page">{current?.label ?? title}</span>
+    </nav>
+
+    <div class="doc">
+      <aside class="doc__aside">
+        <div class="doc__aside-inner">
+          <nav class="doc__nav" aria-label="Docs">
+            {DOC_GROUPS.map((group) => (
+              <div class="doc__nav-group">
+                <h3>{group}</h3>
+                {DOCS.filter((doc) => doc.group === group).map((doc) => (
+                  <a href={doc.href} aria-current={doc.href === path ? 'page' : undefined}>{doc.label}</a>
+                ))}
+              </div>
+            ))}
+            <div class="doc__nav-group">
+              <h3>Site</h3>
+              <a href="/use-cases">Use cases</a>
+              <a href="/faq">FAQ</a>
+              <a href="/support">Support</a>
+            </div>
+          </nav>
+        </div>
+      </aside>
+
+      <div class="doc__main">
+        <header class="doc__head">
+          <span class="label">{label}</span>
+          <h1>{title}</h1>
+          <p>{lead}</p>
+        </header>
+
+        <div class="doc__body prose">
+          <slot />
+        </div>
+
+        <nav class="doc-pager" aria-label="Docs pages">
+          <a href={prev.href}>
+            <span class="label">Previous</span>
+            <b>{prev.label}</b>
+          </a>
+          {next && (
+            <a class="next" href={next.href}>
+              <span class="label">Next</span>
+              <b>{next.label}</b>
+            </a>
+          )}
+        </nav>
+      </div>
+
+      <nav class="toc" data-toc aria-label="On this page">
+        <h2>On this page</h2>
+        {toc.map((item) => <a href={`#${item.id}`}>{item.text}</a>)}
+      </nav>
+    </div>
+  </div>
+</Base>

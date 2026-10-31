@@ -1,0 +1,18 @@
+---
+import { MODES } from '../data/site';
+---
+
+<div class="modes">
+  {MODES.map((mode) => (
+    <a class="mode" href={mode.href}>
+      <span class="mode__n">{mode.n}</span>
+      <span class="mode__title">{mode.title}</span>
+      <span>
+        <span class="mode__body">{mode.body}</span>
+        <span class="mode__tags">
+          {mode.tags.map((tag) => <span class="pill">{tag}</span>)}
+        </span>
+      </span>
+    </a>
+  ))}
+</div>

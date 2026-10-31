@@ -1,0 +1,34 @@
+---
+import { CLIENTS } from '../data/clients';
+import CodeBlock from './CodeBlock.astro';
+
+const { id = 'connect' } = Astro.props;
+---
+
+<div class="tabs" data-tabs>
+  <div class="tabs__list" role="tablist" aria-label="MCP clients">
+    {CLIENTS.map((client, i) => (
+      <button
+        type="button"
+        role="tab"
+        id={`${id}-tab-${client.id}`}
+        aria-controls={`${id}-panel-${client.id}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+      >{client.label}</button>
+    ))}
+  </div>
+
+  {CLIENTS.map((client, i) => (
+    <div
+      class="tabpanel"
+      role="tabpanel"
+      id={`${id}-panel-${client.id}`}
+      aria-labelledby={`${id}-tab-${client.id}`}
+      hidden={i !== 0}
+    >
+      <CodeBlock code={client.code} file={client.file} lang={client.lang} />
+      {client.note && <p>{client.note}</p>}
+    </div>
+  ))}
+</div>

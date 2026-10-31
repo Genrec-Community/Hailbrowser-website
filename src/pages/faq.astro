@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import { FAQ, SITE } from '../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'FAQ', item: `${SITE.url}/faq` },
+    ],
+  },
+];
+---
+
+<Base
+  title="HailBrowser FAQ: keys, browsers and limits"
+  description="Answers to the questions asked before installing HailBrowser: your own Chrome profile, API keys, supported browsers, limits and where your data goes."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">FAQ</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">v{SITE.version}</span>
+        <span class="pill">MIT</span>
+      </div>
+      <h1>Asked before installing.</h1>
+      <p>
+        Plain answers, including the ones that are not flattering. If something here is out of date,
+        the source is <a class="link" href={SITE.repo}>the repository</a>.
+      </p>
+    </header>
+
+    <div class="split split--wide-right">
+      <div class="faq">
+        {FAQ.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <aside class="stack" style="align-content:start">
+        <div class="callout">
+          <p class="label">Still stuck?</p>
+          <p>
+            The install and connect guides both end with a troubleshooting table. If the answer is not
+            there, <a class="link" href="/support">support</a> explains what to include in a report.
+          </p>
+        </div>
+        <div class="callout-lime">
+          <h3>Read the limits first</h3>
+          <p>
+            Shadow DOM, cross-origin iframes, canvas apps, file uploads and PDF research are not
+            finished. <a class="link" href="/docs/limits">The limits page</a> says exactly where the
+            edges are.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>

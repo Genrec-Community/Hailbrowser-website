@@ -1,0 +1,48 @@
+---
+import { NAV, SITE } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => {
+  if (href === '/') return path === '/';
+  if (href === '/docs') return path === '/docs';
+  return path === href || path.startsWith(`${href}/`);
+};
+---
+
+<header class="site-header">
+  <div class="frame site-header__inner">
+    <a class="brand" href="/" aria-label="HailBrowser home">
+      <img src="/brand/mark.svg" alt="" width="26" height="26" />
+      <span>HailBrowser</span>
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      {NAV.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="header-actions">
+      <a class="btn btn--ghost btn--sm" href={SITE.repo} rel="noopener" target="_blank">
+        GitHub <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="btn btn--accent btn--sm" href="/#install">Download</a>
+      <button class="icon-btn menu-btn" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+          <path d="M2 5h12M2 11h12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-nav" id="mobile-nav" data-open="false">
+    <nav class="frame" aria-label="Mobile">
+      <ul>
+        {NAV.map((item, i) => (
+          <li><a href={item.href}>{item.label} <span>0{i + 1}</span></a></li>
+        ))}
+        <li><a href="/#install">Install <span>→</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

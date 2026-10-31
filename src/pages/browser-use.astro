@@ -1,0 +1,279 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, BENCH } from '../data/site';
+
+const faq = [
+  {
+    q: 'What is browser use?',
+    a: 'Browser use is the category of AI agents that operate a web browser to finish a task: reading a page, clicking, typing, choosing from a menu and checking the result. It covers Python frameworks that drive their own browser, and agents built into a browser, like HailBrowser.',
+  },
+  {
+    q: 'Does browser use work with my logins?',
+    a: 'With HailBrowser, yes. It drives your normal Chrome profile through the extension, so the sites you are already signed into work without copying cookies or starting a second profile.',
+  },
+  {
+    q: 'Can Claude Code use my browser through MCP?',
+    a: 'Yes. HailBrowser runs a local MCP server on 127.0.0.1:12306 and exposes 18 browser tools. Claude Code, OpenCode, Cursor, Codex, Windsurf, Gemini CLI and Claude Desktop can each drive the same browser after one config block.',
+  },
+  {
+    q: 'How fast is it?',
+    a: 'In our harness, Ultrafast passed 26 of 26 tasks at a 4.2 second average across three full runs, with no false completions. The harness and every per-task number are published on the benchmarks page.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Browser use in your own Chrome',
+    description:
+      'What browser use is, how HailBrowser does it inside the Chrome you are signed into, and how it compares with a Python browser-use library and an AI browser like Comet.',
+    url: `${SITE.url}/browser-use`,
+    isPartOf: { '@id': `${SITE.url}/#site` },
+    about: { '@type': 'SoftwareApplication', name: 'HailBrowser', applicationCategory: 'BrowserApplication' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Browser use', item: `${SITE.url}/browser-use` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Browser use in your own Chrome — HailBrowser"
+  description="Browser use is an agent clicking, typing and reading the web for you. HailBrowser does it in your Chrome at 4.2s per task, with browser use MCP for Claude Code and Cursor."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Browser use</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Browser use · MCP</span>
+        <span class="pill">Open source · MIT</span>
+      </div>
+      <h1>Browser use,<br />in your browser.</h1>
+      <p>
+        Browser use is an agent doing the clicking for you: reading a page, filling a field, choosing a
+        result, checking it worked. HailBrowser does that inside the Chrome you already use, at a
+        {BENCH.avg} average over {BENCH.passed} tasks — and it exposes the same browser to Claude Code,
+        OpenCode and Cursor over MCP. If you came looking for MCP browser use, that is this: one config
+        block, then your agent drives the browser you are already signed into.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="stats">
+        <div class="stat">
+          <b>4.2s</b>
+          <span>Average per task</span>
+          <em>26 tasks, three full runs, no false completions.</em>
+        </div>
+        <div class="stat">
+          <b>18</b>
+          <span>MCP tools</span>
+          <em>Read, click, type, tabs, dialogs and screenshots.</em>
+        </div>
+        <div class="stat">
+          <b>0</b>
+          <span>Second profiles</span>
+          <em>Your Chrome. Your tabs. Your logins.</em>
+        </div>
+        <div class="stat">
+          <b>MIT</b>
+          <span>Licence</span>
+          <em>No account, no telemetry, no seat price.</em>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split split--wide-right">
+        <div class="stack">
+          <p class="label">The category</p>
+          <h2 class="display-l">An agent with hands.</h2>
+          <p class="body-muted">
+            A chat model can tell you what to click. Browser use is the part where something actually
+            clicks it, sees the result and carries on. That needs a browser, a way to read the page, and
+            a loop that decides the next action.
+          </p>
+        </div>
+        <div>
+          <dl class="deflist">
+            <div>
+              <dt>Read</dt>
+              <dd>Turn the page into something a model can reason about: elements, labels, values, not pixels.</dd>
+            </div>
+            <div>
+              <dt>Act</dt>
+              <dd>Click, type, choose, press a key, scroll, open a tab, accept or dismiss a dialog.</dd>
+            </div>
+            <div>
+              <dt>Verify</dt>
+              <dd>Look at what changed. A field that rejected a value is a failure, not a step completed.</dd>
+            </div>
+            <div>
+              <dt>Report</dt>
+              <dd>Say what happened, where it stopped, and what needs a human. No invented success.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Two ways in</p>
+          <h2 class="display-l">Browser use, or browser use over MCP.</h2>
+        </div>
+        <p class="body-muted">
+          Most people want the first one: type a job, watch it happen. Developers want browser use MCP:
+          their own agent, using this browser as a tool. Both are the same extension.
+        </p>
+      </div>
+
+      <div class="ways">
+        <div class="way">
+          <p class="label">01 · Side panel</p>
+          <h3>The everyday way</h3>
+          <p>
+            Click the HailBrowser icon and ask in plain English. It opens the tab, reads the page, fills
+            the form and writes the answer with sources. Every step is listed, with a Stop button.
+          </p>
+          <p>
+            Chat for a conversation, Fast for forms and searches, Research for cited answers, Tasks for
+            long jobs. One browser, four moods.
+          </p>
+          <a class="btn btn--ghost btn--sm" href="/docs/modes">Read the modes <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="way way--dark">
+          <p class="label">02 · MCP</p>
+          <h3>The agent way</h3>
+          <p>
+            HailBrowser runs a local MCP server with 18 browser tools on <code>127.0.0.1:12306</code>.
+            Add one config block to Claude Code, OpenCode, Cursor or Codex and your agent can drive the
+            same signed-in browser.
+          </p>
+          <ul class="agent-list">
+            <li>Claude Code</li><li>OpenCode</li><li>Cursor</li>
+            <li>Codex CLI</li><li>Claude Desktop</li><li>Gemini CLI</li>
+          </ul>
+          <a class="btn btn--accent btn--sm" href="/docs/connect">Connect an agent <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Compared</p>
+          <h2 class="display-l">Browser use, two shapes.</h2>
+        </div>
+        <p class="body-muted">
+          <a class="link" href="https://github.com/browser-use/browser-use" rel="noopener" target="_blank">browser-use</a>
+          is a strong open-source Python library that drives a browser it launches. HailBrowser is an
+          extension that drives the browser you are in. Both are legitimate; the question is which one
+          fits your day.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <caption>Where each shape fits</caption>
+          <thead>
+            <tr><th scope="col">Question</th><th scope="col">HailBrowser</th><th scope="col">A Python browser-use library</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Which browser?</td><td>The Chrome profile you already use</td><td>A Chromium the script launches</td></tr>
+            <tr><td>Your logins</td><td>Already there</td><td>Sign in again inside that browser</td></tr>
+            <tr><td>How you drive it</td><td>Side panel, or MCP from your agent</td><td>A Python script or your own service</td></tr>
+            <tr><td>Setup</td><td>Load the extension, add a model key, optionally add one MCP config block</td><td>Install the package, write the harness, provide a model</td></tr>
+            <tr><td>Agent integration</td><td>Any MCP client</td><td>Python API</td></tr>
+            <tr><td>Speed evidence</td><td><a href="/benchmarks">26 tasks at 4.2s</a>, harness published</td><td>Measure your own task set</td></tr>
+            <tr><td>Source and licence</td><td>MIT, extension and server in one repo</td><td>Check the project’s repository</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Use the Python library when the browser should be disposable and the harness should live in your
+        code. Use HailBrowser when the browser is the one you are already signed into, or when your agent
+        already speaks MCP.
+      </p>
+    </section>
+
+    <section class="section section--tight">
+      <div class="callout">
+        <p class="label">Also an AI browser</p>
+        <p>
+          If what you want is a Comet-style assistant in the browser you already have, that is the same
+          extension: a side panel that reads the page and does the work. The
+          <a class="link" href="/comet-alternative">open-source Comet alternative</a> page compares the
+          two honestly.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split split--wide-right">
+        <div class="stack">
+          <p class="label">Questions</p>
+          <h2 class="display-m">The short answers.</h2>
+          <p class="body-muted">
+            More in the <a class="link" href="/faq">FAQ</a> and the
+            <a class="link" href="/docs/limits">limits page</a>.
+          </p>
+        </div>
+        <div class="faq">
+          {faq.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/benchmarks">
+          <span class="label">Evidence</span>
+          <b>Benchmark</b>
+          <em>26 tasks, 4.2s each, every number.</em>
+        </a>
+        <a href="/use-cases/coding-agents">
+          <span class="label">Guide</span>
+          <b>Coding agents</b>
+          <em>Claude Code, Cursor, Codex, OpenCode.</em>
+        </a>
+        <a href="/docs/mcp">
+          <span class="label">Reference</span>
+          <b>The 20 tools</b>
+          <em>Parameters, returns, failures.</em>
+        </a>
+        <a href="/comet-alternative">
+          <span class="label">Compare</span>
+          <b>Comet</b>
+          <em>Closed browser, or an extension.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

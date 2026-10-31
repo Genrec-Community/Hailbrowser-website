@@ -1,0 +1,287 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { TOOLS, TOOL_GROUPS } from '../../data/tools';
+import { SITE } from '../../data/site';
+
+const toc = [
+  { id: 'connection', text: 'The connection' },
+  { id: 'refs', text: 'Refs, coordinates and text' },
+  { id: 'returns', text: 'What a call returns' },
+  { id: 'failures', text: 'Failures and timeouts' },
+  { id: 'session', text: 'Tabs and navigation' },
+  { id: 'read', text: 'Reading the page' },
+  { id: 'act', text: 'Acting on the page' },
+  { id: 'script', text: 'Scripting' },
+  { id: 'delegate', text: 'Hand over a goal' },
+];
+
+const grouped = TOOL_GROUPS.map((group) => ({
+  ...group,
+  tools: TOOLS.filter((tool) => tool.group === group.key),
+})).filter((group) => group.tools.length > 0);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'HailBrowser MCP reference: twenty browser tools',
+    description:
+      'Every HailBrowser MCP tool with its parameters, return shape and failure behaviour: tabs, read_page, click, type, scroll, javascript, run_task.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/docs/mcp`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+      { '@type': 'ListItem', position: 3, name: 'MCP reference', item: `${SITE.url}/docs/mcp` },
+    ],
+  },
+];
+---
+
+<Doc
+  title="MCP reference: twenty browser tools"
+  description="All twenty HailBrowser tools with parameters, return shapes, failure behaviour and the notes that matter when an agent drives your browser."
+  label="Docs · Reference"
+  lead="Eighteen tools are exposed over MCP. run_task and stop_task are MCP only, because they hand the whole goal to HailBrowser's own agent instead of driving it step by step."
+  toc={toc}
+  jsonLd={jsonLd}
+>
+  <h2 id="connection">The connection</h2>
+  <p>
+    Your client launches <code>hailbrowser-mcp</code> over stdio. That process listens on
+    <code>127.0.0.1:{SITE.port}</code> and the extension dials in. Tools are grouped below by what they
+    do, in the order a run usually uses them.
+  </p>
+  <CodeBlock
+    code={`# every call needs a tab. Start here.
+tabs_context()
+
+# then read before you act
+read_page({ viewportOnly: true })
+find({ query: "sign in" })
+click({ ref: "ref_12" })`}
+    file="a typical run"
+    lang="text"
+    label="Read, then act"
+    copy={false}
+  />
+
+  <div class="callout">
+    <p class="label">Two rules that prevent most mistakes</p>
+    <p>
+      Call <code>tabs_context</code> before anything else, and call <code>read_page</code> again after any
+      navigation. A ref describes one element on one version of the page; once the page changes, it is
+      gone.
+    </p>
+  </div>
+
+  <h2 id="refs">Refs, coordinates and text</h2>
+  <p>
+    <code>read_page</code> returns an indexed list: <code>[ref_12] button "Continue"</code>. Pass that ref
+    to <code>click</code>, <code>type</code>, <code>select_option</code>, <code>hover</code> or
+    <code>scroll</code>. Refs are cheap and survive layout changes better than pixels.
+  </p>
+  <p>
+    A <code>screenshot</code> returns the visible part of the tab. Coordinates in that image are accepted
+    by <code>click</code>, <code>scroll</code> and <code>hover</code>, which is the fallback for canvas and
+    image maps. Coordinates are relative to the screenshot you were given, not to the full page.
+  </p>
+  <p>
+    For prose rather than controls, use <code>get_page_text</code>. It returns the main content first and
+    caps at 20,000 characters by default, which is usually enough for one article and cheaper than a
+    screenshot.
+  </p>
+
+  <h2 id="returns">What a call returns</h2>
+  <p>
+    Every tool returns text that says what happened, and the result is written for a model rather than a
+    log file. Three examples of the shape:
+  </p>
+  <table>
+    <thead>
+      <tr><th>Tool</th><th>Returns</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>click</code></td><td>Whether the click was dispatched, the element it hit, and whether the page changed or opened a tab.</td></tr>
+      <tr><td><code>type</code></td><td>Whether the value landed, or that the field rejected it and now holds something else. Also reports the field it used when no ref was passed.</td></tr>
+      <tr><td><code>scroll</code></td><td>Which box moved, how far, and <em>Nothing scrolled</em> when the page was already at the end.</td></tr>
+      <tr><td><code>navigate</code></td><td>The final URL, title and whether the load was blocked by Chrome.</td></tr>
+      <tr><td><code>run_task</code></td><td>A summary of the goal, the step log, and the reason it stopped: done, blocked, or waiting for a person.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="failures">Failures and timeouts</h2>
+  <ul>
+    <li><strong>Unknown tab.</strong> The tab was closed or the id is stale. Call <code>tabs_context</code> again.</li>
+    <li><strong>Stale ref.</strong> Re-read the page. Do not reuse a ref across a navigation.</li>
+    <li><strong>Blocked page.</strong> <code>chrome://</code> pages, the Chrome Web Store and the extension's own pages cannot be driven. Chrome enforces this.</li>
+    <li><strong>A frozen tab.</strong> A <code>confirm</code>, <code>alert</code> or "leave site?" dialog blocks the page until <code>handle_dialog</code> answers it. Plain alerts close on their own and are reported in the next result.</li>
+    <li><strong>Timeouts do not finish late.</strong> If a call is cancelled or times out, the action in flight is stopped rather than completed afterwards.</li>
+  </ul>
+
+  <h2 id="session">Tabs and navigation</h2>
+  {grouped.filter((group) => group.key === 'Session').map((group) => (
+    <div class="tool-ref">
+      {group.tools.map((tool) => (
+        <section class="tool-ref__item">
+          <h3 id={`tool-${tool.name}`}><code>{tool.name}</code></h3>
+          <p>{tool.description}</p>
+          {tool.params.length > 0 ? (
+            <table>
+              <thead><tr><th>Parameter</th><th>Required</th><th>Notes</th></tr></thead>
+              <tbody>
+                {tool.params.map((param) => (
+                  <tr>
+                    <td><code>{param.name}</code></td>
+                    <td>{param.required ? 'Yes' : 'No'}</td>
+                    <td>{param.note ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="note">No parameters. It acts on the current agent tab.</p>
+          )}
+        </section>
+      ))}
+    </div>
+  ))}
+
+  <h2 id="read">Reading the page</h2>
+  {grouped.filter((group) => group.key === 'Read').map((group) => (
+    <div class="tool-ref">
+      {group.tools.map((tool) => (
+        <section class="tool-ref__item">
+          <h3 id={`tool-${tool.name}`}><code>{tool.name}</code></h3>
+          <p>{tool.description}</p>
+          {tool.params.length > 0 ? (
+            <table>
+              <thead><tr><th>Parameter</th><th>Required</th><th>Notes</th></tr></thead>
+              <tbody>
+                {tool.params.map((param) => (
+                  <tr>
+                    <td><code>{param.name}</code></td>
+                    <td>{param.required ? 'Yes' : 'No'}</td>
+                    <td>{param.note ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="note">No parameters. It acts on the current agent tab.</p>
+          )}
+        </section>
+      ))}
+    </div>
+  ))}
+
+  <h2 id="act">Acting on the page</h2>
+  <p>
+    These go through <code>chrome.debugger</code>, so the page receives real, trusted mouse and keyboard
+    events. Sites that ignore synthetic events still respond.
+  </p>
+  {grouped.filter((group) => group.key === 'Act').map((group) => (
+    <div class="tool-ref">
+      {group.tools.map((tool) => (
+        <section class="tool-ref__item">
+          <h3 id={`tool-${tool.name}`}><code>{tool.name}</code></h3>
+          <p>{tool.description}</p>
+          {tool.params.length > 0 ? (
+            <table>
+              <thead><tr><th>Parameter</th><th>Required</th><th>Notes</th></tr></thead>
+              <tbody>
+                {tool.params.map((param) => (
+                  <tr>
+                    <td><code>{param.name}</code></td>
+                    <td>{param.required ? 'Yes' : 'No'}</td>
+                    <td>{param.note ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="note">No parameters. It acts on the current agent tab.</p>
+          )}
+        </section>
+      ))}
+    </div>
+  ))}
+
+  <h2 id="script">Scripting</h2>
+  {grouped.filter((group) => group.key === 'Script').map((group) => (
+    <div class="tool-ref">
+      {group.tools.map((tool) => (
+        <section class="tool-ref__item">
+          <h3 id={`tool-${tool.name}`}><code>{tool.name}</code></h3>
+          <p>{tool.description}</p>
+          <p class="note">
+            This is the one tool that can be switched off in Settings → Safety. Prefer
+            <code>click</code> and <code>type</code> for interaction; use this for inspection and
+            extraction.
+          </p>
+          <table>
+            <thead><tr><th>Parameter</th><th>Required</th><th>Notes</th></tr></thead>
+            <tbody>
+              {tool.params.map((param) => (
+                <tr>
+                  <td><code>{param.name}</code></td>
+                  <td>{param.required ? 'Yes' : 'No'}</td>
+                  <td>{param.note ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      ))}
+    </div>
+  ))}
+
+  <h2 id="delegate">Hand over a goal</h2>
+  <p>
+    <code>run_task</code> is different from every other tool: your agent stops driving and HailBrowser's
+    own agent takes over, using the models configured in the extension. That is how a coding agent gets
+    browser work done without a frontier model on every click.
+  </p>
+  {grouped.filter((group) => group.key === 'Delegate').map((group) => (
+    <div class="tool-ref">
+      {group.tools.map((tool) => (
+        <section class="tool-ref__item">
+          <h3 id={`tool-${tool.name}`}><code>{tool.name}</code></h3>
+          <p>{tool.description}</p>
+          {tool.params.length > 0 ? (
+            <table>
+              <thead><tr><th>Parameter</th><th>Required</th><th>Notes</th></tr></thead>
+              <tbody>
+                {tool.params.map((param) => (
+                  <tr>
+                    <td><code>{param.name}</code></td>
+                    <td>{param.required ? 'Yes' : 'No'}</td>
+                    <td>{param.note ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="note">No parameters. It stops the run_task your agent started.</p>
+          )}
+        </section>
+      ))}
+    </div>
+  ))}
+
+  <div class="callout-lime">
+    <h3>Ultrafast is one request per step</h3>
+    <p>
+      In <code>ultrafast</code> mode the decision model returns one operation and one element index. It
+      never returns selectors, coordinates or code. The executor re-reads the page before each input, so a
+      moved button costs another decision, not a misclick.
+    </p>
+    <a class="btn btn--sm" href="/docs/modes">How the modes differ <span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</Doc>

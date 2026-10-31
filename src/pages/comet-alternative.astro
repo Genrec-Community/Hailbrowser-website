@@ -1,0 +1,282 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, AUTHOR, COMPANY } from '../data/site';
+
+const faq = [
+  {
+    q: 'Is HailBrowser a Comet alternative?',
+    a: 'For the everyday part, yes. Both put an AI assistant next to the page you are reading so you can ask for something and watch it happen. HailBrowser is an extension for the Chrome you already use, so you keep your profile, your extensions and your logins instead of moving to a second browser.',
+  },
+  {
+    q: 'Is Comet open source?',
+    a: 'Comet is a closed-source product from Perplexity. HailBrowser is MIT licensed: the extension, the MCP server and the benchmark harness are all in one public repository, so you can read exactly what runs in your browser.',
+  },
+  {
+    q: 'Can I use my existing Chrome extensions and logins?',
+    a: 'Yes. HailBrowser adds a side panel to the browser you already have. Your bookmarks, passwords, extensions, tabs and signed-in sessions stay where they are; there is no new profile and no migration.',
+  },
+  {
+    q: 'Which is better for coding agents?',
+    a: 'HailBrowser is built for that case. It runs a local MCP server with 18 browser tools on 127.0.0.1:12306, so Claude Code, OpenCode, Cursor, Codex, Windsurf, Gemini CLI and Claude Desktop can drive the same signed-in browser. That is the part a browser with a built-in assistant does not give you.',
+  },
+  {
+    q: 'Do I need an account or a subscription?',
+    a: 'No. There is no HailBrowser account and no seat price. It is MIT licensed; you bring a model key from a provider you choose, or run a local model with Ollama or LM Studio. Your keys stay in chrome.storage.local.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'An open-source Comet alternative for the Chrome you already use',
+    description:
+      'How HailBrowser compares with Comet: a side-panel AI browser agent and an MCP server for coding agents, as an MIT extension for the Chrome you are already signed into.',
+    url: `${SITE.url}/comet-alternative`,
+    isPartOf: { '@id': `${SITE.url}/#site` },
+    about: [
+      { '@type': 'SoftwareApplication', name: 'HailBrowser', applicationCategory: 'BrowserApplication' },
+      { '@type': 'SoftwareApplication', name: 'Comet', applicationCategory: 'BrowserApplication' },
+    ],
+    author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+    publisher: { '@type': 'Organization', name: COMPANY.name, url: COMPANY.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Open-source Comet alternative', item: `${SITE.url}/comet-alternative` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Open-source Comet alternative — HailBrowser"
+  description="Comet is a separate AI browser. HailBrowser is an open-source extension that puts an agent in the Chrome you use, plus MCP for Claude Code, Cursor and Codex."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Open-source Comet alternative</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Compare</span>
+        <span class="pill">MIT · no account</span>
+      </div>
+      <h1>The AI browser,<br />without the new browser.</h1>
+      <p>
+        Comet is Perplexity’s browser: a separate Chromium app with an assistant built in. HailBrowser
+        is the open-source Comet alternative for the Chrome you already use — the same idea as an
+        extension, plus the part Comet does not have, an MCP server your coding agent can drive. Comet
+        itself ships as a closed browser; if you searched for Comet open source, this is the MIT
+        project that gives you the same assistant without leaving Chrome.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="stats">
+        <div class="stat">
+          <b>0</b>
+          <span>Browsers to migrate</span>
+          <em>It runs in the Chrome, Edge or Brave you already have.</em>
+        </div>
+        <div class="stat">
+          <b>MIT</b>
+          <span>Licence</span>
+          <em>Extension, MCP server and benchmark harness, all public.</em>
+        </div>
+        <div class="stat">
+          <b>18</b>
+          <span>MCP tools</span>
+          <em>Your agent drives the same signed-in browser.</em>
+        </div>
+        <div class="stat">
+          <b>4.2s</b>
+          <span>Average per task</span>
+          <em>26 of 26 tasks, three full runs, no false completions.</em>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split split--wide-right">
+        <div class="stack">
+          <p class="label">The difference</p>
+          <h2 class="display-l">Same idea.<br />Different shape.</h2>
+          <p class="body-muted">
+            Both products start from a fair observation: the assistant should be where the web is, not
+            in a chat window you paste links into. The question is whether that means a new browser or a
+            new panel in the one you have.
+          </p>
+        </div>
+        <div class="prose">
+          <p>
+            Comet is a browser. Installing it means a second place where your tabs, extensions and
+            sign-ins live, and a product decision about which browser you use every day. That is a
+            reasonable trade for people who want the assistant and the browser from the same company.
+          </p>
+          <p>
+            HailBrowser is an extension. It does not ask you to move. It attaches a side panel to the
+            browser that already has your work in it, uses the tabs you already have open, and can be
+            removed the same way any other extension is. The code is MIT licensed, so “what does it do
+            with my page” has a readable answer.
+          </p>
+          <p>
+            The second difference is who can drive it. A built-in assistant is for the person typing.
+            HailBrowser also exposes the browser over MCP, so Claude Code, OpenCode, Cursor or Codex can
+            use the same session while you work.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Side by side</p>
+          <h2 class="display-m">What each one is.</h2>
+        </div>
+        <p class="body-muted">
+          Comet is a real product and a fair one to compare against. This table describes shape and
+          licensing, not a feature-by-feature teardown we have not run.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <caption>Shape, not a scorecard</caption>
+          <thead>
+            <tr><th scope="col">Question</th><th scope="col">HailBrowser</th><th scope="col">Comet</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>What you install</td><td>An extension in your current browser</td><td>A separate Chromium browser</td></tr>
+            <tr><td>Your existing profile</td><td>Used as it is</td><td>A new browser to sign into</td></tr>
+            <tr><td>Source</td><td>MIT, one public repository</td><td>Closed source</td></tr>
+            <tr><td>Account</td><td>None</td><td>A Perplexity account</td></tr>
+            <tr><td>Model choice</td><td>Anthropic, OpenAI, OpenRouter, Gemini, Groq, DeepSeek, Ollama, LM Studio or any OpenAI-compatible endpoint</td><td>Perplexity’s models</td></tr>
+            <tr><td>Coding agents</td><td>Local MCP server, 18 tools, any MCP client</td><td>Not the shape it is built for</td></tr>
+            <tr><td>Speed evidence</td><td><a href="/benchmarks">26 tasks at 4.2s</a>, harness published</td><td>Measure your own tasks</td></tr>
+            <tr><td>Removal</td><td>Disable the extension</td><td>Uninstall the browser</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Comet’s features and plan change; check Perplexity’s own site for the current state. Everything
+        in the HailBrowser column is in this repository.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <p class="label">Choose honestly</p>
+          <h2 class="display-m">When Comet is the better pick.</h2>
+        </div>
+        <p class="body-muted">
+          A comparison page that cannot name the other product’s advantages is an advert. These are the
+          cases where we would tell a friend to try Comet first.
+        </p>
+      </div>
+
+      <div class="ways">
+        <div class="way">
+          <p class="label">Comet</p>
+          <h3>You want a browser and an assistant from one vendor</h3>
+          <p>
+            If you are happy to make Comet your daily browser and you want its assistant wired into
+            search, tabs and the address bar by the company that ships both, that integration is the
+            product. Nothing to assemble.
+          </p>
+          <p>
+            It is also the simpler answer if you do not want to think about model keys or MCP configs.
+          </p>
+        </div>
+        <div class="way way--dark">
+          <p class="label">HailBrowser</p>
+          <h3>You want your browser, your keys, your agent</h3>
+          <p>
+            You already have a Chrome full of logins and extensions. You want an agent in that, a model
+            you chose, and the same browser available to Claude Code over MCP. You want to read the code
+            or fork it.
+          </p>
+          <a class="btn btn--accent btn--sm" href="/#install">Install HailBrowser <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="callout-lime">
+        <h3>“Open source” is a licence, not a vibe</h3>
+        <p>
+          The extension, the MCP hub and the benchmark harness are in
+          <a class="link" href={SITE.repo}>Shyamnath-Sankar/project-hailbrowser</a> under the MIT licence.
+          You can read every line that touches a page, run the same 26-task benchmark, and publish a
+          better number if you get one.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--sm" href="/benchmarks">See the benchmark <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--sm" href="/browser-use">What browser use means <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split split--wide-right">
+        <div class="stack">
+          <p class="label">Questions</p>
+          <h2 class="display-m">Before you switch anything.</h2>
+          <p class="body-muted">
+            The rest are in the <a class="link" href="/faq">FAQ</a>.
+          </p>
+        </div>
+        <div class="faq">
+          {faq.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/browser-use">
+          <span class="label">Category</span>
+          <b>Browser use</b>
+          <em>The term, the loop, and the two shapes.</em>
+        </a>
+        <a href="/benchmarks">
+          <span class="label">Evidence</span>
+          <b>Benchmark</b>
+          <em>26 tasks, 4.2s each, every number.</em>
+        </a>
+        <a href="/use-cases/coding-agents">
+          <span class="label">Guide</span>
+          <b>Coding agents</b>
+          <em>Claude Code, Cursor, Codex, OpenCode.</em>
+        </a>
+        <a href="/about">
+          <span class="label">Who</span>
+          <b>About</b>
+          <em>Who builds it, and why.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,33 @@
+---
+interface Item {
+  n: string;
+  label: string;
+  href: string;
+}
+interface Props {
+  items: Item[];
+  title?: string;
+  foot?: string;
+}
+const { items, title = 'read_page · this page', foot = '20 elements · 127.0.0.1' } = Astro.props;
+---
+
+<aside class="rail" aria-label="Page index">
+  <div class="rail__inner">
+    <div class="rail__head">
+      <span>{title}</span>
+      <span class="rail__live" aria-hidden="true"></span>
+    </div>
+    <nav class="rail__list" aria-label="Sections">
+      {items.map((item) => (
+        <div class="rail__item" data-rail-item data-rail-target={item.href}>
+          <a href={item.href}><i aria-hidden="true">[{item.n}]</i><span>{item.label}</span></a>
+        </div>
+      ))}
+    </nav>
+    <div class="rail__foot">
+      <b>{foot}</b><br />
+      snapshot of the page you are reading
+    </div>
+  </div>
+</aside>

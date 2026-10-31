@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { DOCS } from '../../data/docs';
+import { SITE, INSTALL } from '../../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'HailBrowser docs',
+    description: 'Install HailBrowser, connect an MCP client, and read the twenty tool definitions.',
+    url: `${SITE.url}/docs`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+    ],
+  },
+];
+---
+
+<Base
+  title="HailBrowser docs: install, MCP and modes"
+  description="Install the extension, connect Claude Code, OpenCode, Cursor, Codex or Claude Desktop over MCP, and read the full tool reference."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Docs</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">v{SITE.version}</span>
+        <span class="pill">MIT</span>
+        <span class="pill">Chromium {SITE.minChrome}+</span>
+      </div>
+      <h1>The manual, in six pages.</h1>
+      <p>
+        HailBrowser is a Chrome extension, a side panel agent, and a local MCP server. These pages cover
+        all three without assuming you have read the source. Start with install if you want it running in
+        two minutes; start with the MCP reference if you only care about what your agent can call.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="cases cases--three" data-reveal-group>
+        {DOCS.map((doc) => (
+          <a class="case" href={doc.href}>
+            <div class="case__top"><span>{doc.group}</span><span class="case__arrow" aria-hidden="true">↗</span></div>
+            <h3>{doc.label}</h3>
+            <p>{doc.blurb}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split">
+        <div class="stack">
+          <p class="label">The sixty-second version</p>
+          <h2 class="display-m">Clone it, load it, key it, connect it.</h2>
+          <p class="body-muted">
+            The extension has no build step and no npm dependencies. The MCP server is a Node process your
+            client starts; the extension dials into it. Nothing is installed system-wide.
+          </p>
+          <p class="note">
+            Full requirements, verification and troubleshooting: <a class="link" href="/docs/install">install guide <span class="arrow" aria-hidden="true">→</span></a>
+          </p>
+        </div>
+        <div class="stack">
+          <CodeBlock code={INSTALL.clone} file="terminal" lang="bash" label="1 · clone" />
+          <CodeBlock code={'chrome://extensions  →  Developer mode  →  Load unpacked  →  extension/'} file="chrome" lang="text" copy={false} label="2 · load" />
+          <CodeBlock code={INSTALL.setup} file="terminal" lang="bash" label="3 · print your MCP config" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="callout-lime">
+        <h3>Reading this on a phone?</h3>
+        <p>
+          The install itself needs a desktop Chromium browser. The docs, the tool reference and the use
+          cases read fine anywhere.
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>

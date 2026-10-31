@@ -1,0 +1,200 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import Demo from '../../components/Demo.astro';
+import { SITE } from '../../data/site';
+
+const toc = [
+  { id: 'chat', text: 'Chat' },
+  { id: 'fast', text: 'Fast (ultrafast)' },
+  { id: 'research', text: 'Research' },
+  { id: 'tasks', text: 'Tasks' },
+  { id: 'choose', text: 'Which one to use' },
+  { id: 'cost', text: 'What each one costs' },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'HailBrowser modes: Chat, Fast, Research and Tasks',
+    description:
+      'How each HailBrowser mode works, when to use it, and what it costs in model calls. Chat, ultrafast Fast mode, cited Research and resumable Tasks.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/docs/modes`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+      { '@type': 'ListItem', position: 3, name: 'Modes', item: `${SITE.url}/docs/modes` },
+    ],
+  },
+];
+---
+
+<Doc
+  title="Modes: chat, fast, research and tasks"
+  description="Chat, Fast (ultrafast), Research and Tasks: what each mode is for, what it costs and when to hand the job to a different one."
+  label="Docs · Behaviour"
+  lead="Four modes, one browser. They share the same tools and the same tab, and Chat will hand work to Research or Tasks when the job calls for it."
+  toc={toc}
+  jsonLd={jsonLd}
+>
+  <p>
+    Pick a mode in the composer under the chat box, or let Chat choose. Switching modes does not move
+    you to another browser or another profile: it changes how the model is asked to work.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>Best for</th><th>Model calls</th><th>Stops and asks</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Chat</strong></td><td>One page, a question, a short job</td><td>One per tool call</td><td>When it is unsure</td></tr>
+      <tr><td><strong>Fast</strong></td><td>Forms, search boxes, repeated clicks</td><td>One decision per step</td><td>On a missing value</td></tr>
+      <tr><td><strong>Research</strong></td><td>A question that needs several sources</td><td>Per source and per round</td><td>Never: it reports gaps</td></tr>
+      <tr><td><strong>Tasks</strong></td><td>A goal that takes many steps</td><td>Per step, across subtasks</td><td>For logins, payments, CAPTCHAs</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="chat">Chat</h2>
+  <p>
+    Chat is a full tool-calling agent for the tab you are looking at. It reads the page as numbered
+    refs, clicks, types, takes screenshots and, when it has to, runs JavaScript. It shows every call it
+    makes, so you can see which element it used.
+  </p>
+  <ul>
+    <li>Works with any provider you configure: Anthropic, OpenAI, OpenRouter, Gemini, Together, Groq, DeepSeek, Ollama, LM Studio or any OpenAI-compatible endpoint.</li>
+    <li>Hands a question that needs the web to <a href="#research">Research</a>, and a long job to <a href="#tasks">Tasks</a>, or you can turn either on yourself.</li>
+    <li>Can remember a fact you ask it to keep: your city, your units, which account you use on a site. A page cannot plant a memory; only your own message can.</li>
+    <li>Answers follow-up questions using the results already on screen, without starting over.</li>
+  </ul>
+
+  <h2 id="fast">Fast (ultrafast)</h2>
+  <p>
+    Fast is built for the boring part: a search box, a date picker, a form with eight fields. Instead of
+    a long conversation about what to do, the page becomes an indexed table of elements and the model
+    answers one question: which operation, on which element.
+  </p>
+  <pre class="mono">page → indexed elements → ONE decision request → execute → observe</pre>
+  <Demo />
+  <ul>
+    <li>The model never writes selectors, coordinates or code. It returns an operation and an observed element index, such as <code>CLICK [3]</code> or <code>TYPE_TEXT [7]</code>.</li>
+    <li>Before every input the executor re-checks that the page and the target are unchanged. If they moved, it retries the decision, not the action.</li>
+    <li>A <code>DONE</code> claim gets a second yes/no check before the run reports success.</li>
+    <li>Questions end with an answer read from the final page. If the page does not say, the answer says so instead of guessing.</li>
+    <li>It can open a site only when your goal names it: a URL, a domain, or a well-known name such as YouTube or Wikipedia.</li>
+    <li>Text to type can come straight from your goal, so most typing steps need no text-helper call.</li>
+  </ul>
+
+  <h3>Five decision backends</h3>
+  <ul>
+    <li><strong>Decision API (default)</strong> — the system-one request format used by Jev: operation plus a speculative target per operation, in one round trip. Point it at any compatible decision model.</li>
+    <li><strong>OpenRouter decision model</strong> — yes/no scoring models served on OpenRouter's decisions endpoint. Every candidate action becomes one yes/no question in a single request, and scores under 0.2 execute nothing.</li>
+    <li><strong>Inception decision model</strong> — <code>mercury-decide</code> on Inception's own API, with native multi-choice questions and probabilities.</li>
+    <li><strong>Letter-choice model</strong> — small classifiers that answer one letter per question. The operation question and each target question run in parallel.</li>
+    <li><strong>Any LLM</strong> — one JSON call per step that returns the operation, the target and the text to type. A fast model is enough.</li>
+  </ul>
+  <p class="note">
+    Settings → Ultrafast is where you pick the backend and add its key. Leave the text helper empty when
+    a coding agent passes values through <code>run_task</code>.
+  </p>
+
+  <h2 id="research">Research</h2>
+  <p>
+    Research answers a question that needs more than one page. The important difference from a search
+    API is where the reading happens: in background tabs of your browser, so pages that need JavaScript
+    or a login still open.
+  </p>
+  <ol>
+    <li><strong>Plan.</strong> The model writes two to four search queries that cover the question from different angles.</li>
+    <li><strong>Search.</strong> Each query runs on DuckDuckGo by default, with Bing, Google or any search URL as a fallback if an engine shows a CAPTCHA or nothing useful.</li>
+    <li><strong>Read.</strong> The most promising results, different sites first, open in parallel background tabs. Each page is condensed into a short summary plus exact quotes.</li>
+    <li><strong>Fill gaps.</strong> Standard and Deep runs check what is missing or resting on one source, then search again.</li>
+    <li><strong>Write.</strong> The report answers first and then gives detail. Every claim cites a numbered source, and citations to sources that do not exist are removed.</li>
+  </ol>
+  <table>
+    <thead>
+      <tr><th>Depth</th><th>Rounds</th><th>Sources read</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Quick</td><td>1</td><td>about 4</td></tr>
+      <tr><td>Standard</td><td>2</td><td>about 6</td></tr>
+      <tr><td>Deep</td><td>3</td><td>about 10</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Tabs are closed when the run finishes. The report can be copied, downloaded as Markdown, or repeated
+    on a schedule. Research cannot read PDFs yet, so a question whose only sources are PDFs will come
+    back thinner than it should.
+  </p>
+
+  <h2 id="tasks">Tasks</h2>
+  <p>
+    Tasks is for jobs too long for one context window: completing a course, checking a list of pages,
+    working through an inbox. The plan is explicit and the progress survives interruptions.
+  </p>
+  <ol>
+    <li><strong>Plan.</strong> The model splits the goal into three to fifteen concrete subtasks, and can add more as it discovers them.</li>
+    <li><strong>Work.</strong> Each subtask runs with a fresh context: the overall goal, the plan with done marks, and saved notes. Context does not balloon, so a task can keep going for hundreds of steps.</li>
+    <li><strong>Remember.</strong> Notes about progress, URLs and answers carry across subtasks. Progress is saved after every step.</li>
+    <li><strong>Ask.</strong> For a login, a payment, a CAPTCHA or an answer it is unsure about, it stops in the panel and continues with your reply.</li>
+    <li><strong>Retry.</strong> A failed subtask is retried once with the issue noted. If it fails again it asks how to proceed, or you can tell it to skip.</li>
+  </ol>
+  <p>
+    Closing the panel or restarting Chrome pauses the task rather than losing it: look for the Resume
+    banner. Steps per subtask and total steps before checking in are budgets in Settings → Tasks. Every
+    task stays in the task list, so you can start another while one is paused.
+  </p>
+
+  <h2 id="choose">Which one to use</h2>
+  <dl class="deflist">
+    <div>
+      <dt>“What does this page say?”</dt>
+      <dd>Chat. One tab, one answer, no plan needed.</dd>
+    </div>
+    <div>
+      <dt>“Search flights and fill the form.”</dt>
+      <dd>Fast. A short, well-defined sequence of inputs where the page is the only thing that changes.</dd>
+    </div>
+    <div>
+      <dt>“Compare these plans across three providers.”</dt>
+      <dd>Research, Standard. Several sources, and you want the quotes and links.</dd>
+    </div>
+    <div>
+      <dt>“Finish the onboarding modules on this course.”</dt>
+      <dd>Tasks. Many steps, likely interruptions, and you want to resume tomorrow.</dd>
+    </div>
+  </dl>
+
+  <h2 id="cost">What each one costs</h2>
+  <p>
+    HailBrowser is free and MIT licensed. You pay your model provider, and only for the calls a run
+    actually makes. The shape of the cost is different per mode:
+  </p>
+  <ul>
+    <li><strong>Chat</strong> calls your chat model once per tool call, with the conversation so far. Long chats cost more per step than short ones.</li>
+    <li><strong>Fast</strong> makes one decision request per step. That is the cheapest way to drive a form, which is why it exists.</li>
+    <li><strong>Research</strong> pays for query planning, one summarisation per source, and the final report. Depth is the dial.</li>
+    <li><strong>Tasks</strong> pays per step across every subtask. The step budgets in Settings are the ceiling, not a target.</li>
+  </ul>
+  <div class="callout">
+    <p class="label">No hidden meter</p>
+    <p>
+      There is no HailBrowser subscription and no proxy in the middle. Keys stay in
+      <code>chrome.storage.local</code> and requests go straight to the provider you chose.
+    </p>
+  </div>
+
+  <div class="callout-lime">
+    <h3>Driving it from a coding agent?</h3>
+    <p>
+      Set a decision model, leave the text helper empty, and let your agent call
+      <code>run_task</code> with the goal and the values. The guide below has the exact arguments.
+    </p>
+    <a class="btn btn--sm" href="/docs/connect">Connect an agent <span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</Doc>

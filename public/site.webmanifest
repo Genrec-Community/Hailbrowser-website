@@ -1,0 +1,12 @@
+{
+  "name": "HailBrowser",
+  "short_name": "HailBrowser",
+  "description": "An open-source browser agent for the Chrome you are already signed into.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f2efe8",
+  "theme_color": "#f2efe8",
+  "icons": [
+    { "src": "/brand/mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

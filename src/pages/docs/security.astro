@@ -1,0 +1,174 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { SITE } from '../../data/site';
+
+const toc = [
+  { id: 'keys', text: 'Keys' },
+  { id: 'local', text: 'A hub on loopback' },
+  { id: 'trust', text: 'Which extension is trusted' },
+  { id: 'switches', text: 'Switches you control' },
+  { id: 'pages', text: 'Page text is untrusted' },
+  { id: 'runs', text: 'Runs end by themselves' },
+  { id: 'data', text: 'What is stored' },
+  { id: 'gaps', text: 'What this does not protect' },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'HailBrowser security model',
+    description:
+      'Where API keys live, why the MCP hub only listens on 127.0.0.1, how the trusted extension file works, and what a page can still do to a model.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/docs/security`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+      { '@type': 'ListItem', position: 3, name: 'Security', item: `${SITE.url}/docs/security` },
+    ],
+  },
+];
+---
+
+<Doc
+  title="Security model: keys, MCP hub and gaps"
+  description="How HailBrowser handles keys, the localhost MCP hub, the trusted extension file and untrusted page content, plus the gaps it does not hide."
+  label="Docs · Behaviour"
+  lead="A tool that drives your logged-in browser should be specific about its trust boundaries. This page is the boundary map, not a promise that nothing can go wrong."
+  toc={toc}
+  jsonLd={jsonLd}
+>
+  <div class="callout">
+    <p class="label">The short version</p>
+    <p>
+      Keys stay in the extension. The MCP hub listens on loopback only. One extension is trusted at a
+      time. Page text is data, never instructions. Every run is visible and stoppable. There is no
+      account and no telemetry.
+    </p>
+  </div>
+
+  <h2 id="keys">Keys</h2>
+  <p>
+    Provider keys are stored in <code>chrome.storage.local</code> and sent only to the provider you
+    selected: Anthropic, OpenAI, OpenRouter, Google, Together, Groq, DeepSeek, Inception, or a local
+    runtime such as Ollama or LM Studio.
+  </p>
+  <ul>
+    <li>There is no HailBrowser proxy and no sign-in server.</li>
+    <li>Keys are never written to a page, a report or a task note.</li>
+    <li>A key you paste into an issue or a screenshot is exposed. Revoke it with the provider first.</li>
+    <li>Removing the extension removes <code>chrome.storage.local</code>, and the keys in it.</li>
+  </ul>
+
+  <h2 id="local">A hub on loopback</h2>
+  <p>
+    <code>hailbrowser-mcp</code> listens on <code>127.0.0.1:{SITE.port}</code>. Loopback is not
+    reachable from another machine, and the server refuses WebSocket connections whose Origin is not a
+    Chrome extension. A normal web page in your browser therefore cannot call the hub, even though it
+    can reach localhost.
+  </p>
+  <p>
+    Several clients share one hub: the first process binds the port, the rest relay through it. When the
+    host exits, another process takes over within a second and the extension reconnects.
+  </p>
+
+  <h2 id="trust">Which extension is trusted</h2>
+  <p>
+    The first HailBrowser extension that connects is trusted, and its ID is remembered in
+    <code>~/.hailbrowser/trusted-extension.json</code>. A different extension that tries to claim the
+    browser is rejected. Reinstalling the extension from another folder produces a new ID, so:
+  </p>
+  <CodeBlock
+    code={`# accept the extension you just installed
+npx hailbrowser-mcp trust <extension-id>
+
+# forget the remembered ID entirely
+npx hailbrowser-mcp trust --reset
+
+# or pin it before the server starts
+HAILBROWSER_EXTENSION_ID=<extension-id> npx hailbrowser-mcp`}
+    file="terminal"
+    lang="bash"
+    label="Managing the trust file"
+  />
+  <p>
+    Run these from the checkout while the MCP client is closed. The extension ID is on
+    <code>chrome://extensions</code>, under the HailBrowser card.
+  </p>
+
+  <h2 id="switches">Switches you control</h2>
+  <dl class="deflist">
+    <div>
+      <dt>Allow external agents</dt>
+      <dd>Settings → Safety. When off, MCP clients cannot reach the browser at all; the side panel still works.</dd>
+    </div>
+    <div>
+      <dt>JavaScript tool</dt>
+      <dd>A separate switch. When off, <code>javascript</code> is refused for MCP clients, even if the rest of the tools are allowed.</dd>
+    </div>
+    <div>
+      <dt>Glow and tab grouping</dt>
+      <dd>Cosmetic, but useful: the border and the purple tab group are how you notice a run you did not expect.</dd>
+    </div>
+    <div>
+      <dt>Stop</dt>
+      <dd>The status pill on the driven tab. It halts the run and tells a coding agent that the person stopped it.</dd>
+    </div>
+  </dl>
+
+  <h2 id="pages">Page text is untrusted</h2>
+  <p>
+    A web page can contain text aimed at the model: “ignore previous instructions”, a fake system
+    message, a hidden instruction in a comment. HailBrowser treats all page content as data. Prompts say
+    so explicitly, and agents are told never to enter passwords or payment details and never to complete
+    a purchase without an explicit instruction.
+  </p>
+  <p>
+    That reduces the risk. It does not remove it. A weak model can still be persuaded, and a
+    well-crafted page is hard to distinguish from a legitimate one. The reliable defence is the same as
+    with any automation: keep the run visible, do not leave it unattended on a site that can move money,
+    and check the result.
+  </p>
+
+  <h2 id="runs">Runs end by themselves</h2>
+  <ul>
+    <li>When a side-panel run finishes, the border, the tab group and the controlling strip clear.</li>
+    <li>When a coding agent makes no call for 12 seconds, control is released the same way.</li>
+    <li>If a call times out or is cancelled, the action in flight is stopped rather than completed later.</li>
+    <li>Screenshots taken for the model hide the overlay, so the model sees the page as it is rather than the annotation.</li>
+    <li>Scheduled runs are stricter: they never send, buy, post or delete anything unless the goal says so, and they report what needs you instead of waiting.</li>
+  </ul>
+
+  <h2 id="data">What is stored</h2>
+  <p>
+    Chats, tasks, research reports, memories and schedules are stored in <code>chrome.storage.local</code>.
+    They stay on your machine, survive a browser restart, and disappear when you remove the extension.
+    Chats and reports export as Markdown.
+  </p>
+  <p>
+    Memories are a short list of facts you asked it to keep. They are added to side-panel chats, tasks
+    and scheduled jobs, but never to runs started by an external coding agent.
+  </p>
+  <p>There is no analytics, no crash reporting and no account to create.</p>
+
+  <h2 id="gaps">What this does not protect</h2>
+  <ul>
+    <li><strong>A malicious page and a compliant model.</strong> Prompt injection is mitigated, not solved.</li>
+    <li><strong>A key copied elsewhere.</strong> The extension cannot revoke a key; your provider can.</li>
+    <li><strong>Another extension with debugger access.</strong> Chrome's permission model is the boundary, not HailBrowser.</li>
+    <li><strong>Your own instructions.</strong> If you tell it to buy something, it will try to buy it.</li>
+    <li><strong>Provider retention.</strong> Page text you send to a model is governed by that provider's policy.</li>
+  </ul>
+  <p>
+    Found something? Report it privately through
+    <a href={`${SITE.repo}/security/advisories/new`} rel="noopener" target="_blank">GitHub security advisories</a>,
+    not a public issue.
+  </p>
+</Doc>

@@ -1,0 +1,158 @@
+---
+import Base from '../../layouts/Base.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { SITE } from '../../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Scheduled browser jobs with HailBrowser',
+    description:
+      'Run a goal once, daily, on weekdays or every few hours in a background tab, with a notification at the end and stricter rules for unattended runs.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/use-cases/recurring-jobs`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Use cases', item: `${SITE.url}/use-cases` },
+      { '@type': 'ListItem', position: 3, name: 'Recurring jobs', item: `${SITE.url}/use-cases/recurring-jobs` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Scheduled browser jobs that run before you sit down"
+  description="Schedule a HailBrowser goal once, daily, on weekdays or every few hours. It runs in a background tab, follows stricter rules, and sends a notification with the result."
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/use-cases">Use cases</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Recurring jobs</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Use case 03</span>
+        <span class="pill">Once · daily · weekdays · every few hours</span>
+      </div>
+      <h1>The job is done<br />before you sit down.</h1>
+      <p>
+        A portal you check every morning, a price you watch, a report you rebuild each Monday. Say it
+        once and let Chrome do it in a background tab.
+      </p>
+    </header>
+
+    <div class="split split--wide-right">
+      <div class="prose">
+        <h2>The prompt</h2>
+        <CodeBlock
+          code={`Every weekday at 8, check my supplier portal for
+new invoices and tell me the total. If something
+needs a decision, say so instead of guessing.`}
+          file="side panel · Chat"
+          lang="text"
+          label="A goal with a time and a rule"
+        />
+        <p>
+          HailBrowser proposes the schedule in the chat. It is only created when you press
+          <strong>Create</strong>, so a page cannot add one behind your back.
+        </p>
+
+        <h2>What happens</h2>
+        <ol>
+          <li>The schedule is stored with <code>chrome.alarms</code> and appears in the schedule list.</li>
+          <li>At the chosen time it opens a background tab, runs the goal and closes what it opened.</li>
+          <li>A notification reports the result, and the run is saved in History like any other chat.</li>
+          <li>If it needs a login, a payment or a CAPTCHA, it stops and tells you rather than waiting silently.</li>
+        </ol>
+
+        <h2>Stricter when nobody is watching</h2>
+        <p>
+          Scheduled runs follow the same tools but a tighter rule: they never send, buy, post or delete
+          anything unless the goal says so. The goal is the permission. “Check the total” does not
+          authorise “pay the invoice”.
+        </p>
+        <p>
+          That also means a scheduled job will not push through ambiguity. It reports what needs you,
+          which is usually the point.
+        </p>
+
+        <h2>What to check</h2>
+        <ul>
+          <li>The first run. Watch it once before you trust it on a schedule.</li>
+          <li>The notification text, not just that a notification arrived.</li>
+          <li>The queue. One run happens at a time, so a long job at 9 delays the job scheduled for 9:05.</li>
+        </ul>
+
+        <h2>What can go wrong</h2>
+        <ul>
+          <li><strong>Chrome was closed.</strong> The job runs once at the next start, not once for every missed interval.</li>
+          <li><strong>The site logged you out.</strong> The run stops and asks, or reports that it could not sign in.</li>
+          <li><strong>Another run is in progress.</strong> The job waits in the queue rather than interleaving clicks.</li>
+          <li><strong>The site changed.</strong> A moved button costs a decision, not a silent failure; the run reports where it stopped.</li>
+        </ul>
+      </div>
+
+      <aside class="stack" style="align-content:start">
+        <div class="callout">
+          <p class="label">Schedules</p>
+          <ul>
+            <li>Once, at a date and time</li>
+            <li>Daily, at a time</li>
+            <li>Weekdays, at a time</li>
+            <li>Every few hours</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <p class="label">Related</p>
+          <ul class="tool-links">
+            <li><a href="/docs/modes#tasks">Tasks mode</a></li>
+            <li><a href="/docs/modes#research">Research depths</a></li>
+            <li><a href="/docs/limits#jobs">Scheduling limits</a></li>
+          </ul>
+        </div>
+        <div class="callout">
+          <p class="label">One at a time</p>
+          <p>
+            Every client shares one browser and one debugger. Two runs at once would interleave clicks,
+            so the second waits.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/use-cases/form-flows">
+          <span class="label">Next</span>
+          <b>Form flows</b>
+          <em>Fill the long form without a text model.</em>
+        </a>
+        <a href="/docs/modes">
+          <span class="label">Behaviour</span>
+          <b>Modes</b>
+          <em>Tasks, research and fast mode.</em>
+        </a>
+        <a href="/docs/security">
+          <span class="label">Trust</span>
+          <b>Security model</b>
+          <em>What a scheduled run may do.</em>
+        </a>
+        <a href="/faq">
+          <span class="label">Answers</span>
+          <b>FAQ</b>
+          <em>Chrome has to be open. Why?</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,74 @@
+---
+// A diagram, not a screenshot: one decision of the Ultrafast loop, rebuilt from the
+// loop described in docs/architecture.md. The engine drives it; without JS or with
+// reduced motion it renders its end state.
+---
+
+<div class="demo" data-demo>
+  <div class="demo__bar">
+    <span class="label">Fig. 01</span>
+    <span>one decision of the ultrafast loop</span>
+    <span class="spacer"></span>
+    <span data-demo-step>step 01 / 05</span>
+    <button class="pill pill--ink" type="button" data-demo-replay>Replay</button>
+  </div>
+
+  <div class="demo__body">
+    <div class="demo__page">
+      <div class="demo__field" data-demo-field data-state="idle">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.6" />
+          <path d="m10.6 10.6 3 3" />
+        </svg>
+        <span data-demo-query aria-hidden="true"></span>
+        <span class="caret" aria-hidden="true"></span>
+        <span class="sr-only">Example search field</span>
+      </div>
+
+      <div class="demo__results" aria-hidden="true">
+        <div class="demo__row" data-demo-row="1">
+          <span class="idx">[1]</span>
+          <b>Flights to Lisbon</b>
+          <span>from €84</span>
+        </div>
+        <div class="demo__row" data-demo-row="2">
+          <span class="idx">[2]</span>
+          <b>Cheapest day to fly</b>
+          <span>2h 45</span>
+        </div>
+        <div class="demo__row" data-demo-row="3">
+          <span class="idx">[3]</span>
+          <b>Lisbon, 20 Sep · 09:40</b>
+          <span>nonstop</span>
+        </div>
+      </div>
+
+      <div class="demo__answer" data-demo-answer>
+        <span>answer</span>
+        <b data-demo-answer-text>nothing read yet</b>
+      </div>
+
+      <div class="cursor" data-demo-cursor aria-hidden="true"></div>
+    </div>
+
+    <div class="demo__panel">
+      <div><span class="k">observe</span> <span class="v">14 elements on screen</span></div>
+      <div><span class="k">op</span> <span class="v lime" data-demo-op>—</span></div>
+      <div><span class="k">target</span> <span class="v" data-demo-target>—</span></div>
+      <div><span class="k">value</span> <span class="v" data-demo-value>—</span></div>
+      <div class="divider" aria-hidden="true"></div>
+      <div class="demo__log" aria-live="polite">
+        <div data-demo-log="1">01 observe · 14 elements</div>
+        <div data-demo-log="2">02 decision · pending</div>
+        <div data-demo-log="3">03 type · 0 chars</div>
+        <div data-demo-log="4">04 click [3] · ok</div>
+        <div data-demo-log="5">05 done · verified</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="note" style="margin:12px 4px 0">
+    A diagram of one step, rebuilt from the loop in docs/architecture.md. The model never
+    writes selectors, coordinates or code: it picks an operation and an element index.
+  </p>
+</div>

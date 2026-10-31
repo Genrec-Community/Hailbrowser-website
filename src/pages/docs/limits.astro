@@ -1,0 +1,135 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import { SITE, LIMITS } from '../../data/site';
+
+const toc = [
+  { id: 'pages', text: 'Pages it cannot drive' },
+  { id: 'research', text: 'Research' },
+  { id: 'jobs', text: 'Scheduled jobs' },
+  { id: 'fast', text: 'Fast mode' },
+  { id: 'trust', text: 'Answers and done claims' },
+  { id: 'workaround', text: 'What to do instead' },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'HailBrowser limits',
+    description:
+      'What HailBrowser 0.1.0 cannot do yet: shadow DOM, cross-origin iframes, canvas, file uploads, PDF research, Chrome pages and unattended schedules.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/docs/limits`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Docs', item: `${SITE.url}/docs` },
+      { '@type': 'ListItem', position: 3, name: 'Limits', item: `${SITE.url}/docs/limits` },
+    ],
+  },
+];
+---
+
+<Doc
+  title="Limits: what HailBrowser cannot do yet"
+  description="The honest list of what HailBrowser cannot do yet, with the reason and workaround for each: shadow DOM, iframes, canvas, uploads, PDFs, Chrome pages, schedules."
+  label="Docs · Behaviour"
+  lead="This is version 0.1.0. It does a few things well and has sharp edges. Every item below is a real limit, not a roadmap promise."
+  toc={toc}
+  jsonLd={jsonLd}
+>
+  <ul>
+    {LIMITS.map((limit) => <li>{limit}</li>)}
+  </ul>
+
+  <h2 id="pages">Pages it cannot drive</h2>
+  <dl class="deflist">
+    <div>
+      <dt>Shadow DOM</dt>
+      <dd>Elements inside a closed or deeply nested shadow root are not in the indexed list. Some can be reached with the JavaScript tool if you know the host; most cannot be clicked reliably.</dd>
+    </div>
+    <div>
+      <dt>Cross-origin iframes</dt>
+      <dd>An embedded payment form or login widget from another origin exposes nothing to the page script. HailBrowser reports the iframe but cannot read or type inside it.</dd>
+    </div>
+    <div>
+      <dt>Canvas apps</dt>
+      <dd>A canvas has no elements to index. Screenshot coordinates still work, but the model is clicking a picture, so accuracy depends on the picture being unambiguous.</dd>
+    </div>
+    <div>
+      <dt>File uploads</dt>
+      <dd>There is no file picker tool. A form whose next step needs a file will stop there.</dd>
+    </div>
+    <div>
+      <dt>Pop-up windows</dt>
+      <dd>A new window is not the same as a new tab. Tabs that open from a click are named in the result; separate windows are not always followed.</dd>
+    </div>
+    <div>
+      <dt><code>chrome://</code> pages and the Chrome Web Store</dt>
+      <dd>Chrome blocks the debugger on its own pages and on the store. This is a browser rule, not a missing feature, and it will not change.</dd>
+    </div>
+  </dl>
+
+  <h2 id="research">Research</h2>
+  <p>
+    Research cannot read PDFs yet. If the best sources for a question only exist as PDFs, the report
+    will either be thinner or lean on secondary summaries. It also cannot log in for you: it uses the
+    session your browser already has.
+  </p>
+  <p>
+    The citation rule is strict: a claim without a source that exists is dropped. That makes reports
+    conservative, and it means a vague answer usually reflects weak sources rather than a lazy model.
+  </p>
+
+  <h2 id="jobs">Scheduled jobs</h2>
+  <ul>
+    <li>Schedules use <code>chrome.alarms</code>, which only fire while Chrome is running.</li>
+    <li>A job that came due while Chrome was closed runs once at the next start, not once for every missed interval.</li>
+    <li>One run happens at a time. Jobs that come due during another run wait in a queue.</li>
+    <li>A scheduled job will not send, buy, post or delete anything unless the goal says so. If it needs a decision, it reports what needs you instead of waiting forever.</li>
+  </ul>
+
+  <h2 id="fast">Fast mode</h2>
+  <p>
+    Fast sees only the elements currently on screen, and scrolls to find more. A control that is hidden
+    behind a hover menu, or that only appears after a long animation, can be missed. It can open a site
+    only when your goal names it: a URL, a domain, or a well-known name.
+  </p>
+  <p>
+    It also does not plan. If a form has a branch that depends on a value (“if you are outside the EU,
+    fill this instead”), the decision model has to discover the branch one step at a time.
+  </p>
+
+  <h2 id="trust">Answers and done claims</h2>
+  <p>
+    A model saying <code>DONE</code> is a claim, not proof. Fast mode asks for a second yes/no check
+    before reporting success, which catches the obvious cases and not all of them. If the outcome
+    matters, verify it: read the confirmation page, check the order, look at the sent mail.
+  </p>
+  <p>
+    Questions are answered from the final page. When the page does not say, the answer says so rather
+    than filling the gap.
+  </p>
+
+  <h2 id="workaround">What to do instead</h2>
+  <ul>
+    <li><strong>For a login wall:</strong> sign in yourself first. The run uses that session.</li>
+    <li><strong>For a payment or a CAPTCHA:</strong> let the task stop and ask. That is the designed behaviour.</li>
+    <li><strong>For a canvas or an iframe:</strong> use a screenshot and coordinates, and check the result, or do that one step by hand.</li>
+    <li><strong>For a PDF:</strong> download it and read it, or ask Research for HTML sources on the same question.</li>
+    <li><strong>For a job that must run without Chrome open:</strong> it cannot, yet. Keep Chrome running or run the job when you are at the machine.</li>
+  </ul>
+
+  <div class="callout-lime">
+    <h3>Found a limit that is not listed?</h3>
+    <p>
+      That is useful. Open an issue with the page, the goal and the step where it stopped, and it can be
+      either fixed or added here.
+    </p>
+    <a class="btn btn--sm" href="/support">How to report it <span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</Doc>

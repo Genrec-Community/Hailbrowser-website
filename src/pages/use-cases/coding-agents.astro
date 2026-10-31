@@ -1,0 +1,172 @@
+---
+import Base from '../../layouts/Base.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+import { SITE } from '../../data/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Use HailBrowser from Claude Code, Cursor, Codex or OpenCode',
+    description:
+      'Give a coding agent the browser you are signed into over MCP: one config block, eighteen tools, and a decision model for the clicking.',
+    dateModified: '2026-10-30',
+    author: { '@type': 'Organization', name: 'HailBrowser contributors' },
+    mainEntityOfPage: `${SITE.url}/use-cases/coding-agents`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Use cases', item: `${SITE.url}/use-cases` },
+      { '@type': 'ListItem', position: 3, name: 'Coding agents', item: `${SITE.url}/use-cases/coding-agents` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Coding agents that use your real browser"
+  description="Connect Claude Code, Cursor, Codex or OpenCode to HailBrowser over MCP so your agent can read, click and type in the Chrome tabs you are already signed into."
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/use-cases">Use cases</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Coding agents</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">Use case 01</span>
+        <span class="pill">Claude Code · Cursor · Codex · OpenCode</span>
+      </div>
+      <h1>Your agent plans.<br />The browser is yours.</h1>
+      <p>
+        A coding agent is good at deciding what to do and bad at pixel-level clicking. HailBrowser gives
+        it the browser you are already signed into, over the MCP connection it already speaks.
+      </p>
+    </header>
+
+    <div class="split split--wide-right">
+      <div class="prose">
+        <h2>The prompt</h2>
+        <p>Paste this into Claude Code, Cursor, Codex or OpenCode after the one-time config:</p>
+        <CodeBlock
+          code={`Use hailbrowser to open my GitHub notifications
+and summarise the ones that need a reply.`}
+          file="your coding agent"
+          lang="text"
+          label="A goal, not a script"
+        />
+        <p>
+          The agent calls <code>tabs_context</code>, then <code>read_page</code>, then it decides what to
+          click. You can watch the border and the cursor move in the tab it chose.
+        </p>
+
+        <h2>What happens</h2>
+        <ol>
+          <li>Your client starts <code>hailbrowser-mcp</code>. The first process becomes the local hub on <code>127.0.0.1:{SITE.port}</code>.</li>
+          <li>The extension dials in. The side panel header turns green and says <strong>MCP connected</strong>.</li>
+          <li>Your agent asks for the pages, gets numbered refs, and acts on them. Each call is one request, not a screenshot loop.</li>
+          <li>When the run ends, or the agent is silent for 12 seconds, the border, the tab group and the controlling strip clear.</li>
+        </ol>
+
+        <h2>Skip the frontier model on every click</h2>
+        <p>
+          If your agent is doing the planning, the clicking does not need the same model. Set a decision
+          model in <strong>Settings → Ultrafast</strong>, leave the text helper empty, and let the agent
+          hand over the goal with its values:
+        </p>
+        <CodeBlock
+          code={`{
+  "goal": "Search one-way flights for 1 adult",
+  "mode": "ultrafast",
+  "values": {
+    "From": "Zurich",
+    "To": "London",
+    "Date": "2026-09-20"
+  }
+}`}
+          file="run_task · arguments"
+          lang="json"
+          label="Goal plus values"
+        />
+        <p>
+          The decision model picks each operation and element. A field named like a key (“Where to?”
+          matching <code>To</code>) is filled without a model call. No text-generation model is used.
+        </p>
+
+        <h2>What to check</h2>
+        <ul>
+          <li>That the agent used the tab you expected. It is named in the controlling strip.</li>
+          <li>That the page it read is the page it acted on. A ref from before a navigation is stale.</li>
+          <li>That the final state is real. A model saying done is a claim; open the page and look.</li>
+        </ul>
+
+        <h2>What can go wrong</h2>
+        <ul>
+          <li><strong>The side panel never turns green.</strong> The server is not running, or both sides use a different port. See <a href="/docs/connect#trouble">connect troubleshooting</a>.</li>
+          <li><strong>Two agents fight over the tab.</strong> They share one debugger and one current tab, so a second run waits. Close one client if that is not what you want.</li>
+          <li><strong>The extension was reinstalled.</strong> Its ID changed and the trust file rejects it. Run <code>npx hailbrowser-mcp trust &lt;new id&gt;</code>.</li>
+          <li><strong>A confirm dialog freezes the run.</strong> Ask the agent to call <code>handle_dialog</code>, or close it yourself.</li>
+        </ul>
+      </div>
+
+      <aside class="stack" style="align-content:start">
+        <div class="callout">
+          <p class="label">Setup</p>
+          <p>
+            One config block per client, printed with your real checkout path.
+            <a class="link" href="/docs/connect">The connect guide <span class="arrow" aria-hidden="true">→</span></a>
+          </p>
+        </div>
+        <div class="callout">
+          <p class="label">Tools in this guide</p>
+          <ul class="tool-links">
+            <li><a href="/docs/mcp#tool-tabs_context">tabs_context</a></li>
+            <li><a href="/docs/mcp#tool-read_page">read_page</a></li>
+            <li><a href="/docs/mcp#tool-click">click</a></li>
+            <li><a href="/docs/mcp#tool-type">type</a></li>
+            <li><a href="/docs/mcp#tool-run_task">run_task</a></li>
+          </ul>
+        </div>
+        <div class="callout">
+          <p class="label">Before you connect</p>
+          <p>
+            Turn on <strong>Settings → Allow external agents</strong>. It is the switch that lets MCP
+            clients reach the browser at all.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="section section--tight">
+      <nav class="more-links" aria-label="Related">
+        <a href="/use-cases/web-research">
+          <span class="label">Next</span>
+          <b>Web research</b>
+          <em>A cited answer from pages behind your login.</em>
+        </a>
+        <a href="/docs/mcp">
+          <span class="label">Reference</span>
+          <b>All 20 tools</b>
+          <em>Parameters, returns and failures.</em>
+        </a>
+        <a href="/docs/security">
+          <span class="label">Trust</span>
+          <b>Security model</b>
+          <em>Keys, loopback and the trust file.</em>
+        </a>
+        <a href="/docs/limits">
+          <span class="label">Honest</span>
+          <b>Limits</b>
+          <em>What it cannot drive yet.</em>
+        </a>
+      </nav>
+    </section>
+  </div>
+</Base>

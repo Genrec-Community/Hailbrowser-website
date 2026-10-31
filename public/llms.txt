@@ -1,0 +1,34 @@
+﻿# HailBrowser
+
+> HailBrowser is the fastest browser use ever made: an open-source (MIT) browser agent for Chromium 116+ that drives the Chrome you are already signed into. Ultrafast passed 26 of 26 browser-use tasks at a 4.2s average across three full runs, with no false completions. It also brings browser use over MCP: a local server with 18 browser tools, so Claude Code, OpenCode, Cursor, Codex and other agents can drive the real, logged-in browser. And it is the open-source Comet alternative: an AI assistant for normal browser users, without switching browsers.
+
+Key facts: version 0.1.0, MIT, no account, no telemetry, hub on `127.0.0.1:12306`, 20 tools (18 over MCP plus `run_task` and `stop_task`), Chrome/Edge/Brave 116+. Built by Shyamnath Sankar (https://shyamnathsankar.genrecai.com/) at GenrecAI (https://genrecai.com). Canonical site: https://hailbrowser.genrecai.com.
+
+## Browser use and benchmarks
+
+- [Browser use](https://hailbrowser.genrecai.com/browser-use): what browser use is, how the loop reads/acts/verifies, and how it compares with a Python browser-use library.
+- [Benchmark](https://hailbrowser.genrecai.com/benchmarks): 26 tasks, 4.2s average, every per-task time, the four live runs, the method and the caveats.
+- [Open-source Comet alternative](https://hailbrowser.genrecai.com/comet-alternative): the AI-browser idea as an extension for your existing Chrome, plus MCP for coding agents.
+- [About](https://hailbrowser.genrecai.com/about): who builds it, the principles, the stack and the licence.
+
+## Docs
+
+- [Install](https://hailbrowser.genrecai.com/docs/install): clone, load the `extension/` folder unpacked, add a model key, verify the side panel.
+- [Connect an agent](https://hailbrowser.genrecai.com/docs/connect): config blocks for Claude Code, OpenCode, Cursor, Codex CLI, Claude Desktop, Windsurf and Gemini CLI.
+- [MCP reference](https://hailbrowser.genrecai.com/docs/mcp): all twenty tools with parameters, return shapes and failures.
+- [Modes](https://hailbrowser.genrecai.com/docs/modes): Chat, Fast (ultrafast), Research and Tasks, with honest cost shapes.
+- [Security](https://hailbrowser.genrecai.com/docs/security): keys in `chrome.storage.local`, loopback-only hub, the trusted extension file, prompt-injection stance, and the gaps.
+- [Limits](https://hailbrowser.genrecai.com/docs/limits): shadow DOM, cross-origin iframes, canvas, uploads, PDF research, Chrome pages, unattended schedules.
+- [FAQ](https://hailbrowser.genrecai.com/faq): the questions asked before installing.
+
+## Use cases
+
+- [Coding agents](https://hailbrowser.genrecai.com/use-cases/coding-agents): let Claude Code, Cursor, Codex or OpenCode use your logged-in browser over MCP.
+- [Web research](https://hailbrowser.genrecai.com/use-cases/web-research): an answer-first report with numbered citations, read in background tabs of your browser.
+- [Recurring jobs](https://hailbrowser.genrecai.com/use-cases/recurring-jobs): once, daily, weekdays or every few hours, with stricter rules for unattended runs.
+- [Form flows](https://hailbrowser.genrecai.com/use-cases/form-flows): pass the goal and values; the decision model picks one operation and one element per step.
+
+## Source
+
+- [Repository](https://github.com/Shyamnath-Sankar/project-hailbrowser): the extension, MCP server, tests, benchmark harness and docs.
+- [Support](https://hailbrowser.genrecai.com/support): issues, security reports and what to include.

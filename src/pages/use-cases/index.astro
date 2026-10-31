@@ -1,0 +1,135 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+
+const cases = [
+  {
+    href: '/use-cases/coding-agents',
+    tag: 'Coding agents',
+    title: 'Let Claude Code use the browser you are signed into',
+    body: 'Your agent plans, HailBrowser does the clicking in your real tabs. One config block, no second profile.',
+    tools: ['read_page', 'click', 'type', 'run_task'],
+  },
+  {
+    href: '/use-cases/web-research',
+    tag: 'Research',
+    title: 'A cited report from pages that need your session',
+    body: 'Ask a question. Sources open in background tabs of your browser, and every claim gets a number.',
+    tools: ['navigate', 'get_page_text', 'research'],
+  },
+  {
+    href: '/use-cases/recurring-jobs',
+    tag: 'Schedules',
+    title: 'A job that runs before you sit down',
+    body: 'Daily, weekdays or every few hours. It works in a background tab and sends a notification with the result.',
+    tools: ['Schedule', 'tasks', 'notifications'],
+  },
+  {
+    href: '/use-cases/form-flows',
+    tag: 'Forms',
+    title: 'Fill the form without a text model',
+    body: 'Give the values once. The decision model picks the field and the value, one request per step.',
+    tools: ['run_task', 'type', 'select_option'],
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'HailBrowser use cases',
+    description:
+      'Four things HailBrowser is good at: coding agents, logged-in research, recurring jobs and long forms, each with a real prompt.',
+    url: `${SITE.url}/use-cases`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Use cases', item: `${SITE.url}/use-cases` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Browser use use cases: forms, research, jobs"
+  description="What to use HailBrowser for: drive your logged-in browser from Claude Code or Cursor, research behind a login, run a scheduled check, or fill a long form."
+  jsonLd={jsonLd}
+>
+  <div class="frame">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Use cases</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="page-hero__meta">
+        <span class="pill pill--ink">v{SITE.version}</span>
+        <span class="pill">Four guides</span>
+      </div>
+      <h1>Four jobs it is good at.</h1>
+      <p>
+        Each guide has the prompt to paste, what the agent will do step by step, the tools involved and
+        what to check afterwards. No invented benchmarks and no two-tab demos.
+      </p>
+    </header>
+
+    <section class="section section--flush">
+      <div class="cases cases--four" data-reveal-group>
+        {cases.map((item) => (
+          <a class="case" href={item.href}>
+            <div class="case__top"><span>{item.tag}</span><span class="case__arrow" aria-hidden="true">↗</span></div>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+            <span class="case__tools">
+              {item.tools.map((tool) => <code>{tool}</code>)}
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="split">
+        <div class="stack">
+          <p class="label">A good first job</p>
+          <h2 class="display-m">Start where a mistake is cheap.</h2>
+          <p class="body-muted">
+            The first run should be something you would not mind doing twice. A search, a price check, a
+            page you need summarised. Save the payment form for after you have watched it work.
+          </p>
+        </div>
+        <dl class="deflist">
+          <div>
+            <dt>Name the site or the tab</dt>
+            <dd>“On the open tab” or a URL removes the guesswork about where to start.</dd>
+          </div>
+          <div>
+            <dt>Give the values, not the steps</dt>
+            <dd>“From Zurich, to London, 20 September, one adult” is better than “click the first field, type Zurich”.</dd>
+          </div>
+          <div>
+            <dt>Say what a good result looks like</dt>
+            <dd>“Tell me the total and whether annual billing is cheaper” gives the run something to verify.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="callout-lime">
+        <h3>Want the mechanics?</h3>
+        <p>
+          The tools behind every guide are documented, with parameters and failure behaviour, in the MCP
+          reference. The modes guide explains when to use Fast instead of Chat.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--sm" href="/docs/mcp">MCP reference <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--sm" href="/docs/modes">Modes <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
