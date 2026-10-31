@@ -23,7 +23,9 @@ const identity = {
       '@id': 'https://genrecai.com/#org',
       name: 'GenrecAI',
       url: 'https://genrecai.com',
-      description: 'GenrecAI builds practical AI tools and agents. HailBrowser is its open-source browser agent.',
+      description: 'GenrecAI builds practical AI tools and agents. HailBrowser is its open-source browser-use agent and browser MCP server.',
+      logo: 'https://hailbrowser.genrecai.com/brand/logo.png',
+      sameAs: ['https://genrecai.com', 'https://github.com/Genrec-Community'],
       founder: { '@id': 'https://hailbrowser.genrecai.com/#author' },
     },
     {
@@ -32,6 +34,7 @@ const identity = {
       name: 'Shyamnath Sankar',
       url: 'https://shyamnathsankar.genrecai.com/',
       worksFor: { '@id': 'https://genrecai.com/#org' },
+      jobTitle: 'Founder, GenrecAI',
       sameAs: ['https://shyamnathsankar.genrecai.com/', 'https://github.com/Shyamnath-Sankar'],
     },
     {
@@ -39,10 +42,26 @@ const identity = {
       '@id': 'https://hailbrowser.genrecai.com/#site',
       name: 'HailBrowser',
       url: 'https://hailbrowser.genrecai.com',
-      description: 'The fastest browser use, in the Chrome you are already signed into.',
+      description: 'HailBrowser: the fastest browser use ever made. An open-source Comet alternative for your own Chrome and a browser-use MCP server for Claude Code, OpenCode, Cursor and Codex.',
       inLanguage: 'en',
       publisher: { '@id': 'https://genrecai.com/#org' },
       author: { '@id': 'https://hailbrowser.genrecai.com/#author' },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      '@id': 'https://hailbrowser.genrecai.com/#app',
+      name: 'HailBrowser',
+      alternateName: ['HailBrowser Ultrafast', 'hailbrowser-mcp'],
+      applicationCategory: 'DeveloperApplication',
+      applicationSubCategory: 'Browser automation, browser use, MCP server',
+      operatingSystem: 'Windows, macOS, Linux (Chrome, Edge, Brave 116+)',
+      url: 'https://hailbrowser.genrecai.com',
+      downloadUrl: 'https://github.com/Shyamnath-Sankar/project-hailbrowser',
+      license: 'https://opensource.org/license/mit',
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      author: { '@id': 'https://hailbrowser.genrecai.com/#author' },
+      publisher: { '@id': 'https://genrecai.com/#org' },
     },
   ],
 };
@@ -72,6 +91,9 @@ const identity = {
 <meta name="theme-color" content="#f2efe8" />
 <meta name="color-scheme" content="light" />
 <meta name="author" content="Shyamnath Sankar, GenrecAI" />
+<meta name="keywords" content="browser use, browser use MCP, MCP browser, browser MCP server, Claude Code browser, OpenCode browser, Cursor browser MCP, Comet open source, open-source Comet alternative, AI browser agent, Chrome AI agent, fastest browser use, HailBrowser, Shyamnath Sankar, GenrecAI" />
+<link rel="author" href="https://shyamnathsankar.genrecai.com/" />
+<link rel="publisher" href="https://genrecai.com" />
 <meta name="application-name" content="HailBrowser" />
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

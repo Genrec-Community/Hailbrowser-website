@@ -8,7 +8,7 @@ export const SITE = {
   license: 'MIT',
   tagline: 'The fastest browser use ever measured, in the Chrome you are already signed into.',
   description:
-    'HailBrowser is an open-source browser-use agent for the Chrome you are already signed into: a side panel for everyday jobs and an MCP server that lets Claude Code, OpenCode, Cursor or Codex drive your real, logged-in browser. Ultrafast averages 4.2s per task over 26 tasks.',
+    'HailBrowser is the fastest browser use ever made: an open-source Comet alternative for the Chrome you are already signed into, and a browser-use MCP server that lets Claude Code, OpenCode, Cursor or Codex drive your real, logged-in browser. Ultrafast: 26/26 tasks at 4.2s, 16/16 real sites. Built by Shyamnath Sankar at GenrecAI.',
   port: 12306,
   minChrome: 116,
   toolCount: 20,
@@ -22,12 +22,15 @@ export const AUTHOR = {
   sameAs: [
     'https://shyamnathsankar.genrecai.com/',
     'https://github.com/Shyamnath-Sankar',
+    'https://genrecai.com',
   ],
+  github: 'https://github.com/Shyamnath-Sankar',
 } as const;
 
 export const COMPANY = {
   name: 'GenrecAI',
   url: 'https://genrecai.com',
+  github: 'https://github.com/Genrec-Community',
 } as const;
 
 export const BENCH = {
@@ -40,6 +43,28 @@ export const BENCH = {
   decisions: 127,
   textCalls: 4,
   script: 'https://github.com/Shyamnath-Sankar/project-hailbrowser/blob/main/scripts/bench-fast.mjs',
+  real: {
+    passed: 16, total: 16, avg: '8.2s', takeovers: 2, fastAlone: 14,
+    rows: [
+      {site:'Wikipedia',goal:'Search Wikipedia for Ada Lovelace and open her article',result:'article open',actions:2,time:'7.8s'},
+      {site:'Wikipedia',goal:'In which year was Alan Turing born?',result:'answered 1912',actions:2,time:'7.3s'},
+      {site:'Wikipedia',goal:'Mount Everest elevation in metres',result:'answered 8,848.86 m',actions:2,time:'7.6s'},
+      {site:'GitHub',goal:'Search repositories for puppeteer and open puppeteer/puppeteer',result:'repo open',actions:4,time:'9.1s'},
+      {site:'YouTube',goal:'Search YouTube for lofi hip hop radio',result:'results page',actions:3,time:'6.7s'},
+      {site:'MDN',goal:'Search MDN for Array.prototype.map and open its page',result:'page open (chat takeover)',actions:5,time:'20.5s'},
+      {site:'Hacker News',goal:'Title of the top story right now',result:'answered',actions:0,time:'2.4s'},
+      {site:'Books to Scrape',goal:'Price of "A Light in the Attic"',result:'answered £51.77',actions:0,time:'1.4s'},
+      {site:'Books to Scrape',goal:'Open Poetry, then the book "Olio"',result:'book open',actions:2,time:'5.6s'},
+      {site:'DemoQA',goal:'Fill name, email and address, then submit',result:'submitted',actions:4,time:'9.5s'},
+      {site:'DemoQA',goal:'Select the "Impressive" radio option',result:'selected',actions:1,time:'1.7s'},
+      {site:'DemoQA',goal:'Expand Home and tick Desktop',result:'ticked (chat takeover)',actions:4,time:'35.0s'},
+      {site:'The Internet',goal:'Choose Option 2 in the dropdown',result:'selected',actions:1,time:'1.6s'},
+      {site:'The Internet',goal:'Make sure both checkboxes are ticked',result:'ticked',actions:1,time:'1.5s'},
+      {site:'The Internet',goal:'Add three elements',result:'3 added',actions:3,time:'3.5s'},
+      {site:'TodoMVC',goal:'Add two todos, mark one completed',result:'done',actions:6,time:'9.3s'},
+    ],
+    script: 'https://github.com/Shyamnath-Sankar/project-hailbrowser/blob/main/scripts/bench-real.mjs',
+  },
   live: [
     {"goal":"Open YouTube and search for trending videos of today","result":"results page","time":"6.7–9.4s"},
     {"goal":"Search Wikipedia for Gödel's incompleteness theorems and open the article","result":"article open","time":"10.2s"},
@@ -92,6 +117,7 @@ export const BENCH = {
 
 export const NAV = [
   { href: '/docs', label: 'Docs' },
+  { href: '/browser-mcp', label: 'Browser MCP' },
   { href: '/use-cases', label: 'Use cases' },
   { href: '/benchmarks', label: 'Benchmarks' },
   { href: '/faq', label: 'FAQ' },
@@ -121,6 +147,7 @@ export const FOOTER_LINKS = [
     title: 'Compare',
     links: [
       { href: '/browser-use', label: 'Browser use' },
+      { href: '/browser-mcp', label: 'Browser use MCP' },
       { href: '/comet-alternative', label: 'Open-source Comet' },
       { href: '/use-cases/coding-agents', label: 'Claude Code & MCP' },
       { href: '/docs/security', label: 'Security model' },
@@ -141,6 +168,8 @@ export const FOOTER_LINKS = [
       { href: '/faq', label: 'FAQ' },
       { href: '/support', label: 'Support' },
       { href: '/about', label: 'About' },
+      { href: 'https://shyamnathsankar.genrecai.com/', label: 'Shyamnath Sankar' },
+      { href: 'https://genrecai.com', label: 'GenrecAI' },
       { href: '/llms.txt', label: 'llms.txt' },
     ],
   },

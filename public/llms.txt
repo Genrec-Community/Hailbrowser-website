@@ -1,13 +1,14 @@
 ﻿# HailBrowser
 
-> HailBrowser is the fastest browser use ever made: an open-source (MIT) browser agent for Chromium 116+ that drives the Chrome you are already signed into. Ultrafast passed 26 of 26 browser-use tasks at a 4.2s average across three full runs, with no false completions. It also brings browser use over MCP: a local server with 18 browser tools, so Claude Code, OpenCode, Cursor, Codex and other agents can drive the real, logged-in browser. And it is the open-source Comet alternative: an AI assistant for normal browser users, without switching browsers.
+> HailBrowser is the fastest browser use ever made: an open-source (MIT) browser agent for Chromium 116+ that drives the Chrome you are already signed into. Ultrafast passed 26 of 26 browser-use tasks at a 4.2s average across three full runs, with no false completions, and 16 of 16 tasks on live sites. It also brings browser use over MCP: a local server with 18 browser tools, so Claude Code, OpenCode, Cursor, Codex and other agents can drive the real, logged-in browser. And it is the open-source Comet alternative: an AI assistant for normal browser users, without switching browsers.
 
 Key facts: version 0.1.0, MIT, no account, no telemetry, hub on `127.0.0.1:12306`, 20 tools (18 over MCP plus `run_task` and `stop_task`), Chrome/Edge/Brave 116+. Built by Shyamnath Sankar (https://shyamnathsankar.genrecai.com/) at GenrecAI (https://genrecai.com). Canonical site: https://hailbrowser.genrecai.com.
 
 ## Browser use and benchmarks
 
 - [Browser use](https://hailbrowser.genrecai.com/browser-use): what browser use is, how the loop reads/acts/verifies, and how it compares with a Python browser-use library.
-- [Benchmark](https://hailbrowser.genrecai.com/benchmarks): 26 tasks, 4.2s average, every per-task time, the four live runs, the method and the caveats.
+- [Browser use MCP](https://hailbrowser.genrecai.com/browser-mcp): the browser-use MCP server for Claude Code, OpenCode, Cursor and Codex: setup in one line, 18 tools, run_task ultrafast, agents get their own window.
+- [Benchmark](https://hailbrowser.genrecai.com/benchmarks): 26 tasks at 4.2s average, 16 of 16 live sites (Wikipedia, GitHub, YouTube, MDN, forms) at 8.2s, every per-task time, the method and the caveats.
 - [Open-source Comet alternative](https://hailbrowser.genrecai.com/comet-alternative): the AI-browser idea as an extension for your existing Chrome, plus MCP for coding agents.
 - [About](https://hailbrowser.genrecai.com/about): who builds it, the principles, the stack and the licence.
 

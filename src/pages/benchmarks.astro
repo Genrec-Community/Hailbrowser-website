@@ -29,8 +29,8 @@ const jsonLd = [
 ---
 
 <Base
-  title="Browser-use benchmark: 26 tasks at 4.2s"
-  description="The fastest browser use ever made: 26 of 26 tasks at a 4.2s average over three runs, with every per-task time, comparison and method."
+  title="Fastest Browser Use Benchmark: 26/26 at 4.2s"
+  description="The fastest browser use ever made: 26 of 26 tasks at 4.2s over three runs, and 16 of 16 live sites. Every per-task time, the method and the script."
   jsonLd={jsonLd}
 >
   <div class="frame">
@@ -170,6 +170,45 @@ const jsonLd = [
           </tbody>
         </table>
       </div>
+    </section>
+
+    <section class="section" id="real-sites">
+      <div class="section-head">
+        <div>
+          <p class="label">Real sites</p>
+          <h2 class="display-m">16 live sites. 16 passed.</h2>
+        </div>
+        <p class="body-muted">
+          The same Fast loop on the open web: Wikipedia, GitHub, YouTube, MDN, Hacker News and four
+          form-test sites, run through the MCP server with run_task. {BENCH.real.passed} of
+          {BENCH.real.total} passed at an {BENCH.real.avg} average. Fast finished
+          {BENCH.real.fastAlone} on its own; on the other {BENCH.real.takeovers} the chat
+          model took over where Fast got stuck, without redoing the finished steps.
+        </p>
+      </div>
+
+      <div class="data">
+        <table>
+          <thead>
+            <tr><th scope="col">Site</th><th scope="col">Goal</th><th scope="col">Result</th><th scope="col">Actions</th><th scope="col">Time</th></tr>
+          </thead>
+          <tbody>
+            {BENCH.real.rows.map((row) => (
+              <tr>
+                <td>{row.site}</td>
+                <td>“{row.goal}”</td>
+                <td><span class="pass">{row.result}</span></td>
+                <td class="num">{row.actions}</td>
+                <td class="num">{row.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Script: <a class="link" href={BENCH.real.script}>scripts/bench-real.mjs</a>. Live sites change and
+        sometimes show bot checks, so expect some run-to-run variation.
+      </p>
     </section>
 
     <section class="section">

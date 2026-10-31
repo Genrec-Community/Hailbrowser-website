@@ -1,5 +1,5 @@
 ---
-import { SITE, FOOTER_LINKS } from '../data/site';
+import { SITE, FOOTER_LINKS, AUTHOR, COMPANY } from '../data/site';
 
 const year = new Date().getFullYear();
 ---
@@ -31,7 +31,7 @@ const year = new Date().getFullYear();
 
     <div class="footer-base">
       <span>© {year} HailBrowser contributors · {SITE.license}</span>
-      <span>Built with Astro, GSAP and Lenis · no analytics</span>
+      <span>Built by <a href={AUTHOR.url} rel="author noopener" target="_blank">{AUTHOR.name}</a> at <a href={COMPANY.url} rel="noopener" target="_blank">{COMPANY.name}</a> · no analytics</span>
       <a href={SITE.repo} rel="noopener" target="_blank">github.com/Shyamnath-Sankar/project-hailbrowser</a>
     </div>
   </div>

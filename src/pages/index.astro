@@ -46,14 +46,16 @@ const jsonLd = [
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     isAccessibleForFree: true,
     featureList: [
-      'The fastest browser use we have measured: 26 of 26 tasks at a 4.2s average',
+      'The fastest browser use ever made: 26 of 26 benchmark tasks at a 4.2s average',
+      '16 of 16 real-site tasks (Wikipedia, GitHub, YouTube, MDN and more) at an 8.2s average',
+      'Open-source Comet alternative: an AI side panel in your existing Chrome, Edge or Brave',
       'Does the clicking inside the Chrome you are already signed into',
       'Ask in plain English from a side panel',
       'Fills forms, reads pages and opens tabs',
-      'MCP server so Claude Code, Cursor, Codex and other agents drive the same browser',
+      'Browser use MCP server so Claude Code, OpenCode, Cursor, Codex and other agents drive the same logged-in browser',
       'Shows every step and can be stopped at any time',
     ],
-    author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+    author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url, sameAs: AUTHOR.sameAs },
     publisher: { '@type': 'Organization', name: COMPANY.name, url: COMPANY.url },
   },
   {
@@ -73,8 +75,8 @@ const jsonLd = [
 ---
 
 <Base
-  title="HailBrowser — the fastest browser use, in your own Chrome"
-  description="The fastest browser use ever made: an open-source agent in your own Chrome. 26/26 tasks at 4.2s, plus MCP for Claude Code, Cursor and Codex."
+  title="HailBrowser — Fastest Browser Use and Browser MCP, Open Source"
+  description="The fastest browser use ever made: an open-source Comet alternative in your own Chrome, plus a browser-use MCP server for Claude Code, OpenCode and Cursor."
   jsonLd={jsonLd}
 >
   <section class="hero">
@@ -82,7 +84,8 @@ const jsonLd = [
       <div class="hero__top">
         <div class="hero__tags">
           <span class="pill pill--live">Fastest browser use · 4.2s</span>
-          <span class="pill">Open source · MIT</span>
+          <span class="pill">Open-source Comet alternative</span>
+          <span class="pill">Browser use MCP</span>
           <span class="pill">No account</span>
         </div>
         <a class="btn btn--accent btn--sm" href="#install">Download <span class="arrow" aria-hidden="true">↓</span></a>
@@ -100,14 +103,15 @@ const jsonLd = [
             HailBrowser does the clicking for you, inside the browser you already use — and it is the
             fastest browser use ever made. 26 of 26 tasks at a 4.2 second average. Ask in plain
             English: it opens the tab, reads the page, fills the form and tells you what it found. No new
-            profile. No logging in again.
+            profile. No logging in again. Use it like Comet from the side panel, or plug the same browser
+            into Claude Code, OpenCode, Cursor or Codex as a browser-use MCP server.
           </p>
           <div class="hero__actions">
             <a class="btn btn--accent" href="#install">Download HailBrowser <span class="arrow" aria-hidden="true">→</span></a>
             <a class="btn btn--ghost" href="/benchmarks">See the benchmark</a>
           </div>
           <div class="hero__meta">
-            <span>Free forever, MIT</span>
+            <span>Free forever, open source (MIT)</span>
             <span>Your keys stay on your machine</span>
             <span>Watch and stop every step</span>
           </div>
@@ -322,8 +326,8 @@ const jsonLd = [
 
       <div class="ways">
         <div class="way">
-          <p class="label">01 · Side panel</p>
-          <h3>The everyday way</h3>
+          <p class="label">01 · Side panel · for everyone</p>
+          <h3>Like Comet, in the Chrome you already use</h3>
           <p>
             Click the HailBrowser icon and ask in plain English. It opens the tab, reads the page,
             fills the form and writes the answer with sources. Chat, Fast, Research and Tasks, with
@@ -332,8 +336,8 @@ const jsonLd = [
           <a class="btn btn--ghost btn--sm" href="/docs/modes">Read the modes <span class="arrow" aria-hidden="true">→</span></a>
         </div>
         <div class="way way--dark">
-          <p class="label">02 · MCP</p>
-          <h3>The agent way</h3>
+          <p class="label">02 · MCP · for developers</p>
+          <h3>Browser use MCP for Claude Code and OpenCode</h3>
           <p>
             HailBrowser runs a local MCP server with 18 browser tools on <code>127.0.0.1:12306</code>.
             That makes it browser use over MCP: add one config block and Claude Code, OpenCode, Cursor
@@ -342,7 +346,10 @@ const jsonLd = [
           <ul class="agent-list">
             {agents.map((agent) => <li>{agent}</li>)}
           </ul>
-          <a class="btn btn--accent btn--sm" href="/docs/connect">Connect an agent <span class="arrow" aria-hidden="true">→</span></a>
+          <div class="hero__actions">
+            <a class="btn btn--accent btn--sm" href="/docs/connect">Connect an agent <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost btn--sm" href="/browser-mcp" style="--btn-fg:var(--ground);border-color:var(--line)">Why a browser MCP <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
         </div>
       </div>
     </section>
